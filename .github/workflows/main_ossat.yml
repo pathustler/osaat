@@ -33,6 +33,9 @@ jobs:
       - name: Run collectstatic
         run: python manage.py collectstatic
         
+      - name: Run collectstatic
+        run: python manage.py collectstatic
+        
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
