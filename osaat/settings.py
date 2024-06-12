@@ -88,7 +88,7 @@ WSGI_APPLICATION = "osaat.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',
+        'ENGINE': 'django.db.backends.mssql',
         'NAME': "osaat-database",
         'USER': "osaat-server-admin",
         'PASSWORD': "hpN5$3KRMjS$0vGM",
