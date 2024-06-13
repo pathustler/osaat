@@ -88,16 +88,12 @@ WSGI_APPLICATION = "osaat.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mssql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': "osaat-database",
         'USER': "osaat-server-admin",
         'PASSWORD': "hpN5$3KRMjS$0vGM",
         'HOST': "osaat-server.database.windows.net",
-        'PORT': '1433',  # Default port for SQL Server is 1433, you can leave this empty if using default
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-            'extra_params': 'TrustServerCertificate=yes;',  # Optional: depending on your SQL Server configuration
-        },
+        'PORT': '1433',  
     }
 }
 
