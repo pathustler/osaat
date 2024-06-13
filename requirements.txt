@@ -1,8 +1,7 @@
 asgiref==3.8.1
 Django==5.0.6
-django-cors-headers==4.3.1
+django-cors-headers>=3.2
 django-mssql-backend==2.8.1
-django-pyodbc-azure==2.1.0.0
 djangorestframework==3.15.1
 mssql-django==1.5
 mysqlclient==2.2.4
