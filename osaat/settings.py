@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -86,15 +86,20 @@ WSGI_APPLICATION = "osaat.wsgi.application"
 # }
 
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': "osaat-database",
-        'USER': "osaat-server-admin",
-        'PASSWORD': "hpN5$3KRMjS$0vGM",
-        'HOST': "osaat-server.database.windows.net",
-        'PORT': '1433',  
-    }
+        "ENGINE": "mssql",
+        'NAME': os.getenv('AZURE_SQL_DATABASE'),
+        'USER': os.getenv('AZURE_SQL_USER'),
+        'PASSWORD': os.getenv('AZURE_SQL_PASSWORD'),
+        'HOST': os.getenv('AZURE_SQL_SERVER'),
+        'PORT': os.getenv('AZURE_SQL_PORT', '1433'),
+        'OPTIONS': {
+                'driver': 'ODBC Driver 18 for SQL Server',
+                'extra_params': 'TrustServerCertificate=yes;'
+            },
+    },
 }
 
 # Password validation
