@@ -54,6 +54,11 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://ossat.azurewebsites.net',
+]
+
 ROOT_URLCONF = "osaat.urls"
 
 TEMPLATES = [
