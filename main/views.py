@@ -3,11 +3,15 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 # Create your views here.
 
 @login_required
 def index(request):
+    now = datetime.now()
+
+    current_time = now.strftime("%H:%M")
     return render(request, 'main/index.html')
 
 
