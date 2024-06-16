@@ -4,8 +4,8 @@
     <title>OSAAT- Home</title>
 </head>
 <body>
-    <h2>Welcome to the Home Page</h2>
     {% if user.is_authenticated %}
+    <h2>Welcome to the Home Page</h2>
     <p>Hi, {{ user.username }}.</p>
     <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
