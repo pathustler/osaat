@@ -9,10 +9,11 @@ from datetime import datetime
 
 @login_required
 def index(request):
-    now = datetime.now()
-
-    current_time = now.strftime("%H:%M")
     return render(request, 'main/index.html')
+
+@login_required
+def customer(request):
+    return render(request, 'main/customer.html')
 
 
 # def signup(request):

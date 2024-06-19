@@ -12,4 +12,5 @@ urlpatterns = [
         authentication_form=CustomAuthenticationForm
     ), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
+    path('customer/', views.customer, name="customer")
 ]
