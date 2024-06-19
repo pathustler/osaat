@@ -18,7 +18,11 @@
                 <img src="{% static 'images/logoosaat.png' %}" class="w-3/4" alt="OSAAT Logo">
             </div>
             <div class="mb-16 text-center flex flex-col gap-2">
-                <h2 class="text-5xl font-bold">{{ user.username }}</h2>
+                {% if user.firstname %}
+                    <h2 class="text-5xl font-semibold">{{ user.firstname }}</h2>
+                {% else %}
+                    <h2 class="text-5xl font-semibold">{{ user.username }}</h2>
+                {% endif %}
                 <p id="date" class="text-xl text-gray-600">April 15th, 2024</p>
                 <p id="time" class="text-xl text-gray-600"></p>
             </div>

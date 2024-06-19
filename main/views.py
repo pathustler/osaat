@@ -3,13 +3,20 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
+from django.contrib.auth.models import Group
 
 # Create your views here.
 
 @login_required
 def index(request):
-    return render(request, 'main/index.html')
+    
+    user = request.user
+    groups = user.groups.all()
+    grouplist = []
+    for i in groups:
+        grouplist.append(i.name)
+    
+    return render(request, 'main/index.html', {'grouplist': grouplist})
 
 @login_required
 def customer(request):
