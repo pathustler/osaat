@@ -14,7 +14,6 @@
     <div class="flex">
        <div class="bg-gray-200 w-1/4 h-screen p-6 flex flex-col justify-between py-12"> 
         <div class=" flex flex-col justify-center items-center ">
-<<<<<<< HEAD
             <a href="/">
             <div class="mb-32 text-center w-full flex items-center justify-center">
                
@@ -24,17 +23,6 @@
         </a>
             <div class="mb-16 text-center flex flex-col gap-2">
                 <h2 class="text-5xl font-bold">{{ user.username }}</h2>
-=======
-            <div class="mb-32 text-center w-full flex items-center justify-center">
-                <img src="{% static 'images/logoosaat.png' %}" class="w-3/4" alt="OSAAT Logo">
-            </div>
-            <div class="mb-16 text-center flex flex-col gap-2">
-                {% if user.firstname %}
-                    <h2 class="text-5xl font-semibold">{{ user.firstname }}</h2>
-                {% else %}
-                    <h2 class="text-5xl font-semibold">{{ user.username }}</h2>
-                {% endif %}
->>>>>>> 713ba7b06038e74a11cd49634325c186e0f0057f
                 <p id="date" class="text-xl text-gray-600">April 15th, 2024</p>
                 <p id="time" class="text-xl text-gray-600"></p>
             </div>
