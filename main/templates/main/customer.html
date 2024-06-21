@@ -69,7 +69,11 @@
     <div id="timeline" class="tab-content hidden justify-between p-4">
         <div class="w-full flex  items-center justify-end gap-6 ">
             <button class="h-8 w-fit px-4 text-gray-500 hover:text-gray-700 border-2 border-gray-500 hover:border-gray-700 rounded-md">REFRESH</button>
+<<<<<<< HEAD
             <button class="h-8 w-fit px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md" id="newPostBtn">NEW POST</button>
+=======
+            <button class="h-8 w-fit px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md">NEW POST</button>
+>>>>>>> 713ba7b06038e74a11cd49634325c186e0f0057f
             <div class="flex flex-row items-center justify-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#888" class="w-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -209,12 +213,10 @@
                 content.classList.add('hidden');
             });
 
-
             document.querySelectorAll('nav a').forEach(tab => {
                 tab.classList.remove('border-blue-500', 'text-blue-500', 'border-b-2');
                 tab.classList.add('text-gray-500');
             });
-
 
             document.getElementById(tabId).classList.remove('hidden');
 
