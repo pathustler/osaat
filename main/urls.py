@@ -12,4 +12,7 @@ urlpatterns = [
         authentication_form=CustomAuthenticationForm
     ), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
+    path("customer/<str:unique_code>/", views.customer, name="customer"),
+    path('customer/<str:unique_code>/timeline/create/', views.timeline_create, name='timeline_create'),
+    path('customer/order', views.order, name="order")
 ]

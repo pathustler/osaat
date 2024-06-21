@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+    
+    {% endblock %}
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        
+</head>
+<body class="bg-gray-100">
+    <div class="flex">
+       <div class="bg-gray-200 w-1/4 h-screen p-6 flex flex-col justify-between py-12"> 
+        <div class=" flex flex-col justify-center items-center ">
+            <a href="/">
+            <div class="mb-32 text-center w-full flex items-center justify-center">
+               
+                    <img src="{% static 'images/logoosaat.png' %}" class="w-3/4" alt="OSAAT Logo">
+               
+            </div>
+        </a>
+            <div class="mb-16 text-center flex flex-col gap-2">
+                <h2 class="text-5xl font-bold">{{ user.username }}</h2>
+                <p id="date" class="text-xl text-gray-600">April 15th, 2024</p>
+                <p id="time" class="text-xl text-gray-600"></p>
+            </div>
+            <div class="w-full flex flex-row items-center justify-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#888" class="w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                  
+                <input type="text" placeholder="Global Search" class="w-full p-2 border border-gray-400 rounded">
+            </div>
+            </div>
+
+        <div class="flex flex-row justify-between items-center">
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button style="background-color: #999; color: black; padding: 6px 16px; border-radius: 4px;" type="submit">Logout</button>
+                </form>
+            <div>
+                <img class="w-36" src="{% static 'images/suncontrol.png' %}" alt="Sun Control Logo">
+            </div>
+        </div>
+        </div>
+
+
+        {% block content %}{% endblock %}
+
+
+    </div>
+</body>
+<script> 
+    var date = new Date(); 
+    var dd = date.getDate(); 
+    var mm = date.toLocaleString('default', { month: 'long' });
+    var yyyy = date.getFullYear(); 
+    var newDate =  mm + " "+dd+ "th, " +yyyy; 
+    var p = document.getElementById("date"); 
+    p.innerHTML = newDate; 
+
+
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+
+    let currentTime = hours + ':' + minutes;
+    var pt = document.getElementById("time"); 
+    pt.innerHTML = currentTime; 
+
+</script> 
+
+{% block script %}
+
+{% endblock %}
+
+</html>
