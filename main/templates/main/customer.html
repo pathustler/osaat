@@ -121,7 +121,7 @@
     </div>
     <div id="orders" class="tab-content hidden justify-between p-4">
         <div class="w-72 text-right h-8 flex flex-row items-center justify-end gap-3 relative right-0 float-right">
-            <button class="h-8 w-fit px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md">NEW ORDER</button>
+            <a href="{% url 'order' unique_code=customer.unique_code %}" class="h-8 w-fit px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md flex items-center justify-center">NEW ORDER</a>
         </div>
         <div class="flex gap-4">
             

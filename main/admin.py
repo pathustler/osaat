@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Customer, WasabiGallery, Timeline, WasabiFile
+from .models import Customer, WasabiGallery, Timeline, WasabiFile, Order,Unit
 
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'display_groups')
@@ -20,6 +20,8 @@ admin.site.register(Customer)
 admin.site.register(WasabiGallery)
 admin.site.register(Timeline)
 admin.site.register(WasabiFile)
+admin.site.register(Order)
+admin.site.register(Unit)
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

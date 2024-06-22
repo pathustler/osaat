@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from .models import Customer ,Timeline
 from django.shortcuts import render, get_object_or_404
-from .forms import TimelineForm
+from .forms import TimelineForm, OrderForm, UnitForm
 # Create your views here.
 
 @login_required
@@ -78,5 +78,22 @@ def logout_view(request):
     return redirect('login')
 
 
-def order(request):
-    return render(request, "main/order_entry.html")
+def order(request, unique_code):
+    customer = get_object_or_404(Customer, unique_code=unique_code)
+    if request.method == 'POST':
+        order_form = OrderForm(request.POST)
+        if order_form.is_valid():
+            order = order_form.save(commit=False)
+            order.customer = customer
+            order.save()
+            # Redirect to a success page or another view
+            return redirect('customer', unique_code=unique_code) 
+        else:
+            print("INVALID")
+    else:
+        order_form = OrderForm()
+    
+    return render(request, 'main/order_entry.html', {
+        'oform': order_form,
+        'customer': customer,
+    })
