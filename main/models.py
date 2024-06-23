@@ -60,7 +60,7 @@ class Order(models.Model):
     ]
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     account_name = models.CharField(max_length=255)
-    po_number = models.CharField(max_length=100)
+    po_number = models.CharField(max_length=100, unique=True)
     ship_to = models.CharField(max_length=255)
     shipping_address = models.CharField(max_length=255)
     city = models.CharField(max_length=100)

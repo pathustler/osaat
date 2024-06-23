@@ -4,9 +4,10 @@ from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
-from .models import Customer ,Timeline
-from django.shortcuts import render, get_object_or_404
+from .models import Customer ,Timeline, Order, Unit
+from django.shortcuts import render, get_object_or_404,redirect
 from .forms import TimelineForm, OrderForm, UnitForm
+from django.urls import reverse
 # Create your views here.
 
 @login_required
@@ -77,9 +78,10 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
-
+@login_required
 def order(request, unique_code):
     customer = get_object_or_404(Customer, unique_code=unique_code)
+    
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         if order_form.is_valid():
@@ -87,7 +89,7 @@ def order(request, unique_code):
             order.customer = customer
             order.save()
             # Redirect to a success page or another view
-            return redirect('customer', unique_code=unique_code) 
+            return redirect('unit', unique_code=unique_code, po_number=order.po_number) 
         else:
             print("INVALID")
     else:
@@ -97,3 +99,42 @@ def order(request, unique_code):
         'oform': order_form,
         'customer': customer,
     })
+
+@login_required
+def unit(request, unique_code, po_number):
+    customer = get_object_or_404(Customer, unique_code=unique_code)
+    order = get_object_or_404(Order, po_number=po_number)
+    unit_number = len(order.units.all()) + 1
+    
+    
+    
+    if request.method == 'POST':
+        unit_form = UnitForm(request.POST)
+        if unit_form.is_valid():
+            unit = unit_form.save(commit=False)
+            unit.order = order
+            unit.save()
+            return redirect('customer', unique_code=unique_code)
+        else:
+            print("INVALID")
+            print(unit_form.errors) 
+    else:
+        unit_form = UnitForm()
+    
+    return render(request, "main/unit.html", {
+        "form": unit_form,
+        'customer': customer,
+        "order": order,
+        "unit_number": unit_number,
+    })
+
+
+@login_required
+def delete_event(request, event_id):
+    event = get_object_or_404(Timeline, id=event_id)
+    
+    if request.method == "POST":
+        event.delete()
+        return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
+
+    return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 

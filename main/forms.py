@@ -49,48 +49,27 @@ class UnitForm(forms.ModelForm):
     class Meta:
         model = Unit
         fields = '__all__'
+        exclude = ['order']
 
     def __init__(self, *args, **kwargs):
         super(UnitForm, self).__init__(*args, **kwargs)
-        self.fields['product_type'].widget = forms.HiddenInput()
-        self.fields['width'].widget = forms.HiddenInput()
-        self.fields['drop'].widget = forms.HiddenInput()
-        self.fields['handing'].widget = forms.HiddenInput()
-        self.fields['box_color'].widget = forms.HiddenInput()
-        self.fields['fabric_color'].widget = forms.HiddenInput()
-        self.fields['mounting'].widget = forms.HiddenInput()
-        self.fields['motor_type'].widget = forms.HiddenInput()
-        self.fields['remote_type'].widget = forms.HiddenInput()
-        self.fields['hardware_color'].widget = forms.HiddenInput()
-        self.fields['cable_mount'].widget = forms.HiddenInput()
-        self.fields['cable_size'].widget = forms.HiddenInput()
-        self.fields['pile_brush'].widget = forms.HiddenInput()
 
-    def clean(self):
-        cleaned_data = super().clean()
-        manual_shade = cleaned_data.get("manual_shade")
+        # Update widget attributes with Tailwind CSS classes
+        self.fields['product_type'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['width'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['drop'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['handing'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['box_color'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['fabric_color'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['mounting'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['accessory'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['hand_brace'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['motor_type'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['remote_type'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['fabric_type'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['hardware_color'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['cable_mount'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['cable_size'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
+        self.fields['pile_brush'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
 
-        self.fields['product_type'].widget = forms.Select(choices=self.fields['product_type'].choices)
-        self.fields['width'].widget = forms.NumberInput()
-        self.fields['drop'].widget = forms.NumberInput()
-        self.fields['handing'].widget = forms.Select(choices=self.fields['handing'].choices)
-        self.fields['box_color'].widget = forms.Select(choices=self.fields['box_color'].choices)
-        self.fields['fabric_color'].widget = forms.Select(choices=self.fields['fabric_color'].choices)
-        self.fields['mounting'].widget = forms.Select(choices=self.fields['mounting'].choices)
-        self.fields['product_type'].widget = forms.Select(choices=self.fields['product_type'].choices)
-        self.fields['motor_type'].widget = forms.Select(choices=self.fields['motor_type'].choices)
-        self.fields['remote_type'].widget = forms.Select(choices=self.fields['remote_type'].choices)
-        self.fields['fabric_type'].widget = forms.Select(choices=self.fields['fabric_type'].choices)
-        self.fields['hardware_color'].widget = forms.Select(choices=self.fields['hardware_color'].choices)
-        self.fields['cable_mount'].widget = forms.Select(choices=self.fields['cable_mount'].choices)
-        self.fields['cable_size'].widget = forms.Select(choices=self.fields['cable_size'].choices)
-        self.fields['pile_brush'].widget = forms.Select(choices=self.fields['pile_brush'].choices)
-
-    def save(self, commit=True):
-        instance = super(UnitForm, self).save(commit=False)
-        if instance.manual_shade:
-            instance.motor_type = None
-            instance.remote_type = None
-        if commit:
-            instance.save()
-        return instance
+    
