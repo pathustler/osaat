@@ -17,4 +17,5 @@ urlpatterns = [
     path('customer/<str:unique_code>/order/create', views.order, name="order"),
     path('customer/<str:unique_code>/order/<str:po_number>/unit', views.unit, name="unit"),
     path('delete_event/<int:event_id>/', views.delete_event, name='delete_event'),
+    path('customer/<str:unique_code>/order/<str:po_number>', views.order_info, name="orderinfo"),
 ]

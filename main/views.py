@@ -41,20 +41,11 @@ def timeline_create(request, unique_code):
 @login_required
 def customer(request, unique_code):
     customer = get_object_or_404(Customer, unique_code=unique_code)
-    timelines = customer.timeline.all()
-    return render(request, 'main/customer.html', {"customer":customer, "timelines":timelines})
+    timelines = customer.timeline.all()[::-1]
+    orders = customer.orders.all()
+    return render(request, 'main/customer.html', {"customer":customer, "timelines":timelines, "orders":orders})
 
 
-# def signup(request):
-#     if request.method == 'POST':
-#         form = UserCreationForm(request.POST)
-#         if form.is_valid():
-#             user = form.save()
-#             login(request, user)
-#             return redirect('index')  
-#     else:
-#         form = UserCreationForm()
-#     return render(request, 'main/signup.html', {'form': form})
 
 
 def login_view(request):
@@ -81,6 +72,7 @@ def logout_view(request):
 @login_required
 def order(request, unique_code):
     customer = get_object_or_404(Customer, unique_code=unique_code)
+
     
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
@@ -138,3 +130,16 @@ def delete_event(request, event_id):
         return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
 
     return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
+
+
+@login_required
+def order_info(request, unique_code, po_number):
+    customer = get_object_or_404(Customer, unique_code=unique_code)
+    order = get_object_or_404(Order, po_number=po_number)
+    units = order.units.all()
+    return render(request, 'main/order_info.html', {
+        'customer': customer,
+        "order": order,
+        "units":units
+    })
+    

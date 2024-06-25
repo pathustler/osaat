@@ -58,7 +58,7 @@ class Order(models.Model):
     ship_choices = [
         ('OLD DOMINION','OLD DOMINION')
     ]
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, related_name='orders', on_delete=models.CASCADE)
     account_name = models.CharField(max_length=255)
     po_number = models.CharField(max_length=100, unique=True)
     ship_to = models.CharField(max_length=255)
