@@ -18,4 +18,7 @@ urlpatterns = [
     path('customer/<str:unique_code>/order/<str:po_number>/unit', views.unit, name="unit"),
     path('delete_event/<int:event_id>/', views.delete_event, name='delete_event'),
     path('customer/<str:unique_code>/order/<str:po_number>', views.order_info, name="orderinfo"),
+    path('customer/<str:unique_code>/order/<str:po_number>/confirmation', views.confirmation, name="confirmation"),
+    path('customer/<str:unique_code>/order/<str:po_number>/place_order', views.place_order, name="place_order"),
+    path('orderplaced', views.order_already_placed_error, name="order_already_placed_error")
 ]

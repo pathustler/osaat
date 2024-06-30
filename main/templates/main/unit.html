@@ -18,7 +18,7 @@
                 <span class="text-gray-500">ORDER #{{ order.po_number }}</span>
             </div>
             <div class="flex-col gap-10" style="height: 75vh;">
-                <form method="POST">
+                <form method="POST" id="orderForm">
                     {% csrf_token %}
                 <div class="space-y-4 pb-4 mb-4 px-6 h-[75vh] overflow-y-auto" style="height: 65vh;">
 
@@ -128,17 +128,13 @@
                         </div>
                         <div class="w-full flex items-center mt-4 box-border justify-center gap-4">
                             <a href="{% url 'customer' unique_code=customer.unique_code %}" class="w-full border-2 h-10 border-gray-700 text-center flex inset-2 box-border hover:bg-gray-700 hover:text-white text-gray-700 rounded-md px-4 items-center justify-center">Cancel</a>
-                            <button type="submit" class="w-full border-2 h-10 border-gray-700 inset-2 box-border hover:bg-gray-700 text-center flex hover:text-white text-gray-700 rounded-md px-4 items-center justify-center">Add Unit {{unit_number|add:"1"}}</button>
-                      
-                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600  text-white rounded-md px-4 py-2">Place Order</button>
-                        
+                            <button id="addUnitBtn" type="button" class="w-full border-2 h-10 border-gray-700 inset-2 box-border hover:bg-gray-700 text-center flex hover:text-white text-gray-700 rounded-md px-4 items-center justify-center">Add Unit {{unit_number|add:"1"}}</button>
+                            <a href="{% url 'confirmation' unique_code=customer.unique_code po_number=order.po_number %}" id="placeOrderBtn" type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2">Place Order</a>
+                        </div>
                     
-
-                         </div>
-                    </form>
                     
                 </div>
-                
+                </form>
                 </div>
             </div>
     </div>
@@ -149,7 +145,57 @@
     </div>
 {% endif %}
 
+{% endblock %}
 
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const manualShadeCheckbox = document.getElementById('manualshade');
+        const remoteTypeField = document.getElementById('remote_type').parentElement;
+        const hand_brace = document.getElementById('hand_brace').parentElement;
+        const cable_mount = document.getElementById('cable_mount').parentElement;
+        const cable_size = document.getElementById('cable_size').parentElement;
+
+        function toggleRemoteField() {
+            if (manualShadeCheckbox.checked) {
+                remoteTypeField.style.display = 'none';
+                hand_brace.style.display = 'none';
+                cable_mount.style.display = 'block';
+                cable_size.style.display = 'block';
+
+                document.getElementById('remote_type').value = '';
+                document.getElementById('hand_brace').value = '';
+
+            } else {
+                remoteTypeField.style.display = 'block';
+                hand_brace.style.display = 'block';
+                cable_mount.style.display = 'none';
+                cable_size.style.display = 'none';
+
+                document.getElementById('cable_mount').value = ''; 
+                document.getElementById('cable_size').value = '';
+            }
+        }
+
+        manualShadeCheckbox.addEventListener('change', toggleRemoteField);
+
+        // Initial check on page load
+        toggleRemoteField();
+    });
+
+    document.getElementById('addUnitBtn').addEventListener('click', function() {
+        const form = document.getElementById('orderForm');
+        form.reset();
+        form.action = "{% url 'unit' unique_code=customer.unique_code po_number=order.po_number %}";
+        form.submit();
+    });
+
+    document.getElementById('placeOrderBtn').addEventListener('click', function() {
+        const form = document.getElementById('orderForm');
+        form.action = "{% url 'confirmation' unique_code=customer.unique_code po_number=order.po_number %}";
+        form.submit();
+    });
+</script>
 
 
 

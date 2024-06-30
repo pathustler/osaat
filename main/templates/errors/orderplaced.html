@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+</head>
+<body>
+    <div class="overflow-y-auto mx-auto py-12 flex items-center justify-center" style="height: 100vh">
+        <div class="bg-white rounded-xl overflow-auto text-center" style="width: 400px;">
+            <div class="px-6 py-4">
+                <h1 class="text-2xl font-bold mb-4">Order Already Placed</h1>
+                <p class="text-gray-700 mb-8">Your order has already been placed. You cannot place the same order again.</p>
+                <a href="{% url 'index' %}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2">Go Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

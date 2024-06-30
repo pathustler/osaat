@@ -59,6 +59,7 @@ class Order(models.Model):
         ('OLD DOMINION','OLD DOMINION')
     ]
     customer = models.ForeignKey(Customer, related_name='orders', on_delete=models.CASCADE)
+    confirmed = models.BooleanField(default=False)
     account_name = models.CharField(max_length=255)
     po_number = models.CharField(max_length=100, unique=True)
     ship_to = models.CharField(max_length=255)
@@ -134,6 +135,7 @@ class Unit(models.Model):
     ]
 
     order = models.ForeignKey(Order, related_name='units', on_delete=models.CASCADE)
+    unit_number = models.IntegerField()
     manual_shade = models.BooleanField(default=False)
 
     # Fields
@@ -155,4 +157,4 @@ class Unit(models.Model):
     pile_brush = models.CharField(choices=pile_brush_choices, max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return f"Unit {self.id} in Order {self.order.po_number}"
+        return f"Unit {self.unit_number}, Order {self.order.po_number}, Customer {self.order.customer.unique_code}"

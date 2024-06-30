@@ -1,0 +1,85 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block title %}
+<title>Customer Page</title>
+{% endblock %}
+
+{% block content %}
+<div class="overflow-y-auto mx-auto  flex items-center justify-center" style="height: 100vh">
+    <div class="bg-white rounded-xl px-8 py-6" style="width: 700px;">
+        <div class="">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-2xl font-bold">New Order</h1>
+            </div>
+
+            <div class="grid grid-cols-3 gap-8">
+                <div>
+                    <h2 class="text-md font-semibold">ACCOUNT NAME</h2>
+                    <p class="text-gray-700">{{ order.account_name }}</p>
+
+                    <h2 class="mt-4 text-md font-semibold">PO #</h2>
+                    <p class="text-gray-700">{{ order.po_number }}</p>
+
+                    <h2 class="mt-4 text-md font-semibold">PURCHASER</h2>
+                    <p class="text-gray-700">{{ customer.primary_contact }}</p>
+                    {% if order.installation_address != "None" %}
+                    <h2 class="mt-4 text-md font-semibold">INSTALLATION ADDRESS</h2>
+                    <p class="font-normal text-gray-600">{{order.ship_to}}</p>
+                    <p class="font-normal text-gray-600">{{order.shipping_address}} {{order.zip_code}}</p>
+                    {% else %}
+                    <p class="font-normal uppercase text-gray-600">{{order.account_name}}</p>
+                    <p class="font-normal text-gray-600">{{order.installation_address}}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <h2 class="text-md font-semibold">PHONE</h2>
+                    <p class="text-gray-700">{{ order.phone }}</p>
+
+                    <h2 class="mt-4 text-md font-semibold">SHIPPING ADDRESS</h2>
+                    <p class="font-normal text-gray-600">{{order.ship_to}}</p>
+                    <p class="font-normal text-gray-600">{{order.shipping_address}} {{order.zip_code}}</p>
+
+                    <h2 class="mt-4 text-md font-semibold">SHIP VIA</h2>
+                    <p class="text-gray-700">{{ order.ship_via }}</p>
+                </div>
+
+                <div>
+                    <h2 class=" text-md font-semibold">Order Date</h2>
+                    <p class="text-gray-700 h-12 w-32 border-2 border-black text-center py-2 ">{{ order.order_date }}</p>
+
+                    <h2 class="mt-4 text-md font-semibold">PO #</h2>
+                    <p class="text-gray-700 h-12 w-32 border-2 border-black text-center py-2  ">{{ order.po_number }}</p>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-lg font-semibold">Order Summary</h2>
+                <div class="flex gap-8 mt-4 overflow-x-auto" style="width: 700px; height: 200px;">
+                    {% for unit in units %}
+                    <div class="p-4 bg-gray-50 rounded-md shadow-sm" style="width: 200px; flex-shrink: 0;">
+                        <h3 class="font-semibold mb-2">Unit {{ unit.unit_number }}</h3>
+                        <p class="text-gray-700 text-xs">{{ unit.type }}</p>
+                        <p class="text-gray-700 text-xs">Width: {{ unit.width }} Drop: {{ unit.drop }}</p>
+                        <p class="text-gray-700 text-xs">Handing: {{ unit.handing }}</p>
+                        <p class="text-gray-700 text-xs">Fabric: {{ unit.fabric }}</p>
+                        <p class="text-gray-700 text-xs">MT: {{ unit.mt }}</p>
+                        <p class="text-gray-700 text-xs">BX Color: {{ unit.bx_color }}</p>
+                        <p class="text-gray-700 text-xs">Guide: {{ unit.guide }}</p>
+                        <p class="text-gray-700 text-xs">Controls: {{ unit.controls }}</p>
+                        <p class="text-gray-700 text-xs">Sensors: {{ unit.sensors }}</p>
+                        <p class="text-gray-700 text-xs">Pile Brush: {{ unit.pile_brush }}</p>
+                    </div>
+                    
+                    {% endfor %}
+                </div>
+            </div>
+
+            <a href="{% url 'place_order' unique_code=customer.unique_code po_number=order.po_number %}" class="my-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2 float-right">Place Order</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

@@ -49,7 +49,7 @@ class UnitForm(forms.ModelForm):
     class Meta:
         model = Unit
         fields = '__all__'
-        exclude = ['order']
+        exclude = ['order','unit_number']
 
     def __init__(self, *args, **kwargs):
         super(UnitForm, self).__init__(*args, **kwargs)

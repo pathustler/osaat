@@ -42,7 +42,7 @@ def timeline_create(request, unique_code):
 def customer(request, unique_code):
     customer = get_object_or_404(Customer, unique_code=unique_code)
     timelines = customer.timeline.all()[::-1]
-    orders = customer.orders.all()
+    orders = customer.orders.filter(confirmed=True)
     return render(request, 'main/customer.html', {"customer":customer, "timelines":timelines, "orders":orders})
 
 
@@ -97,7 +97,8 @@ def unit(request, unique_code, po_number):
     customer = get_object_or_404(Customer, unique_code=unique_code)
     order = get_object_or_404(Order, po_number=po_number)
     unit_number = len(order.units.all()) + 1
-    
+    if order.confirmed:
+        return redirect('order_already_placed_error')
     
     
     if request.method == 'POST':
@@ -105,8 +106,8 @@ def unit(request, unique_code, po_number):
         if unit_form.is_valid():
             unit = unit_form.save(commit=False)
             unit.order = order
+            unit.unit_number = unit_number
             unit.save()
-            return redirect('customer', unique_code=unique_code)
         else:
             print("INVALID")
             print(unit_form.errors) 
@@ -135,11 +136,35 @@ def delete_event(request, event_id):
 @login_required
 def order_info(request, unique_code, po_number):
     customer = get_object_or_404(Customer, unique_code=unique_code)
-    order = get_object_or_404(Order, po_number=po_number)
+    order = get_object_or_404(Order, po_number=po_number, confirmed=True)
     units = order.units.all()
+
+        
     return render(request, 'main/order_info.html', {
         'customer': customer,
         "order": order,
         "units":units
     })
     
+@login_required 
+def confirmation(request, unique_code, po_number):
+    customer = get_object_or_404(Customer, unique_code=unique_code)
+    order = get_object_or_404(Order, po_number=po_number,  confirmed=False)
+    units = order.units.all()
+    return render(request, 'main/order_confirmation.html', {
+        'customer': customer,
+        "order": order,
+        "units":units
+    })
+    
+@login_required 
+def place_order(request, unique_code, po_number):
+    customer = get_object_or_404(Customer, unique_code=unique_code)
+    order = get_object_or_404(Order, po_number=po_number)
+    order.confirmed = True
+    order.save()
+    return redirect('orderinfo', unique_code=unique_code, po_number=po_number)
+
+
+def order_already_placed_error(request):
+    return render(request,"errors/orderplaced.html")
