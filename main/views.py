@@ -165,6 +165,12 @@ def place_order(request, unique_code, po_number):
     order.save()
     return redirect('orderinfo', unique_code=unique_code, po_number=po_number)
 
-
+@login_required 
 def order_already_placed_error(request):
     return render(request,"errors/orderplaced.html")
+
+
+
+@login_required
+def calendar_index(request):
+    return render(request, "calendar/index.html")

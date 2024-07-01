@@ -20,5 +20,10 @@ urlpatterns = [
     path('customer/<str:unique_code>/order/<str:po_number>', views.order_info, name="orderinfo"),
     path('customer/<str:unique_code>/order/<str:po_number>/confirmation', views.confirmation, name="confirmation"),
     path('customer/<str:unique_code>/order/<str:po_number>/place_order', views.place_order, name="place_order"),
-    path('orderplaced', views.order_already_placed_error, name="order_already_placed_error")
+    path('orderplaced', views.order_already_placed_error, name="order_already_placed_error"),
+    
+    #CALENDARS
+    path('calendar/', views.calendar_index, name='calendar_index'),
+    
+    
 ]

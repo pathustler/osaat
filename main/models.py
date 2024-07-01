@@ -158,3 +158,35 @@ class Unit(models.Model):
 
     def __str__(self):
         return f"Unit {self.unit_number}, Order {self.order.po_number}, Customer {self.order.customer.unique_code}"
+
+
+
+
+
+
+
+
+
+class Crew(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class TechnicianEvent(models.Model):
+    statusoptions = [
+        ('Active','active'),
+        ('Estimate','estimate'),
+        ('Sold','sold'),
+        ('Cancelled','cancelled')
+    ]
+    technician = models.CharField(max_length=100)
+    crew = models.ForeignKey(Crew, on_delete=models.CASCADE)
+    status = models.CharField(choices=statusoptions,max_length=100)
+    title = models.CharField(max_length=100)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+
+    def __str__(self):
+        return self.title
