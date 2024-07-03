@@ -168,25 +168,94 @@ class Unit(models.Model):
 
 
 class Crew(models.Model):
-    name = models.CharField(max_length=100)
+    char_choices = [
+        ('technician','Technician'),
+        ('sales','Sales'),
+        ('delivery','Delivery')
+    ]
+    name = models.ForeignKey(User, related_name='units', on_delete=models.CASCADE)
+    crew_type = models.CharField(choices=char_choices, max_length=60)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.crew_type})"
 
 
 class TechnicianEvent(models.Model):
+    statusoptions = [
+        ('active','Active'),
+        ('estimate','Estimate'),
+        ('sold','Sold'),
+        ('cancelled','Cancelled')
+    ]
+    visit_type_choices = [
+        ('installation','Installation'),
+        ('warranty','Warranty Serice'),
+        ('tech','Tech Measure'),
+        ('service','Service')
+    ]
+    crew_choices = [
+        ('c1','Crew 1'),
+        ('c2','Crew 2'),
+        ('c3','Crew 3'),
+    ]
+    
+    technician =  models.ForeignKey(Crew, on_delete=models.CASCADE)
+    crew =  models.CharField(choices=crew_choices, max_length=20)
+    confirmed = models.BooleanField(default=False)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="technician_events")
+    visit_type = models.CharField(choices=visit_type_choices, max_length=100)
+
+    title = models.CharField(max_length=100)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.technician} - {self.order.po_number} {self.visit_type}"
+    
+class SalesEvent(models.Model):
     statusoptions = [
         ('Active','active'),
         ('Estimate','estimate'),
         ('Sold','sold'),
         ('Cancelled','cancelled')
     ]
-    technician = models.CharField(max_length=100)
-    crew = models.ForeignKey(Crew, on_delete=models.CASCADE)
+    
+    salesperson = models.ForeignKey(Crew, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="sales_events")
+    title = models.CharField(max_length=100)
+    main_phone = models.CharField(max_length=20)
+    address = models.CharField(max_length=100)
+    appointment_notes = models.TextField(blank=True, null=True)
     status = models.CharField(choices=statusoptions,max_length=100)
     title = models.CharField(max_length=100)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
     def __str__(self):
-        return self.title
+        return f"{self.salesperson} - {self.order.po_number} {self.title}"
+
+
+class GroupedJob(models.Model):
+    statusoptions = [
+        ('Delivered','delivered'),
+        ('Not Delivered','notdelivered'),
+        ('Missing Part','missing'),
+    ]
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="delivery_jobs")
+    title = models.CharField(max_length=60)
+    done = models.BooleanField(default=False)
+
+class DeliveryEvent(models.Model):
+   
+    
+    title = models.CharField(max_length=100)
+    address = models.CharField(max_length=100)
+    special_instructions = models.TextField(blank=True, null=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    jobs = models.ManyToManyField(GroupedJob, related_name="delivery_events")
+
+    def __str__(self):
+        return f"{self.salesperson} - {self.order.po_number} {self.title}"
+    
+

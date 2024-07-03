@@ -23,7 +23,10 @@ urlpatterns = [
     path('orderplaced', views.order_already_placed_error, name="order_already_placed_error"),
     
     #CALENDARS
-    path('calendar/', views.calendar_index, name='calendar_index'),
-    
+    path('calendar/technician_calendar', views.technician_calendar, name='technician_calendar'),
+    path('calendar/sales_calendar', views.sales_calendar, name='sales_calendar'),
+    path('calendar/delivery_calendar', views.delivery_calendar, name='delivery_calendar'),
+    path('api/technician_events/', views.get_technician_events, name='get_technician_events'),
+  
     
 ]

@@ -4,10 +4,14 @@ from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
-from .models import Customer ,Timeline, Order, Unit
+from .models import Customer ,Timeline, Order, Unit, TechnicianEvent
 from django.shortcuts import render, get_object_or_404,redirect
 from .forms import TimelineForm, OrderForm, UnitForm
 from django.urls import reverse
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 @login_required
@@ -174,3 +178,54 @@ def order_already_placed_error(request):
 @login_required
 def calendar_index(request):
     return render(request, "calendar/index.html")
+@login_required
+def technician_calendar(request):
+    return render(request, 'calendar/technician_calendar.html')
+@login_required
+def sales_calendar(request):
+    return render(request, 'calendar/sales_calendar.html')
+@login_required
+def delivery_calendar(request):
+    return render(request, 'calendar/delivery_calendar.html')
+
+def get_technician_events(request):
+    STATUS_COLORS = {
+        'installation': '#ffe073',  # yellow
+        'warranty': '#efc192',  # orange
+        'tech': '#62cade',  # blue
+        'service': '#e2a361',  # red
+    }
+    
+    eventtypes = {
+        'installation': 'Installation',  # yellow
+        'warranty': 'Warranty Service',  # yellow
+        'tech': 'Tech Measure',  # blue
+        'service': 'Service',  # red
+    }
+    
+    events = TechnicianEvent.objects.all()
+    events_data = []
+
+    for event in events:
+        color = STATUS_COLORS.get(event.visit_type.lower(), '#555555')  
+
+        crew_name = event.technician.name.username 
+        opo = event.order.po_number
+        cust = event.order.customer.unique_code
+
+        events_data.append({
+            'id': event.id,
+            'title': event.title,
+            'start': event.start_time.isoformat(),
+            'end': event.end_time.isoformat(),
+            'color': color,
+            'crew': crew_name,
+            'order': event.order.po_number,  # assuming you have a po_number field in the Order model
+            'visit_type': eventtypes[event.visit_type],    # to get the human-readable name of status
+            'confirmed': event.confirmed,
+            'crew_label': event.crew,
+            'customer':cust,
+            'opo':opo
+        })
+
+    return JsonResponse(events_data, safe=False)

@@ -1,0 +1,67 @@
+{% extends 'calendar/layout.html' %}
+{% load static %}
+
+{% block title %}
+<title>Customer Page</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="flex space-x-4 mb-4" id="calendarTabs">
+        <a href="{% url 'technician_calendar' %}"><button class="tab-link py-2 px-4 bg-gray-300 text-black rounded" id="technician-tab" data-tab="technician">Technician</button></a>
+        <a href="{% url 'sales_calendar' %}"><button class="tab-link py-2 px-4 bg-gray-300 text-black rounded" id="sales-tab" data-tab="sales">Sales</button></a>
+        <a href="{% url 'delivery_calendar' %}"> <button class="tab-link py-2 px-4 bg-blue-500 text-white rounded" id="delivery-tab" data-tab="delivery">Delivery</button></a>
+    </div>
+    <div class="tab-content">
+        <div class="tab-pane" id="technician-calendar"></div>
+        <div class="tab-pane" id="sales-calendar" style="display: none;"></div>
+        <div class="tab-pane" id="delivery-calendar" style="display: none;"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var technicianCalendar, salesCalendar, deliveryCalendar;
+
+        function renderTechnicianCalendar() {
+            if (!technicianCalendar) {
+                var calendarElTechnician = document.getElementById('technician-calendar');
+                technicianCalendar = new FullCalendar.Calendar(calendarElTechnician, {
+                    initialView: 'timeGridWeek',
+                    height: '65vh',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'timeGridWeek,timeGridDay'
+                    },
+                    events: {
+                        url: '{% url "get_technician_events" %}',
+                        method: 'GET',
+                        failure: function() {
+                            alert('there was an error while fetching events!');
+                        }
+                    },
+                    eventRender: function(info) {
+                        var crewName = info.event.extendedProps.crew;
+                        info.el.querySelector('.fc-title').innerHTML += '<br/><span class="fc-crew">' + crewName + '</span>';
+                    }
+                });
+                technicianCalendar.render();
+            }
+        }
+
+       
+        
+
+        renderTechnicianCalendar();
+    
+
+
+    });
+</script>
+{% endblock %}
