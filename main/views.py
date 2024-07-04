@@ -229,3 +229,13 @@ def get_technician_events(request):
         })
 
     return JsonResponse(events_data, safe=False)
+
+
+def delete_technician_event(request, event_id):
+    event = get_object_or_404(TechnicianEvent, id=event_id)
+    print(event)
+    if request.method == "POST":
+        event.delete()
+        return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
+
+    return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 

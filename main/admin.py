@@ -23,7 +23,7 @@ class CrewAdmin(admin.ModelAdmin):
 
 @admin.register(TechnicianEvent)
 class TechnicianEventAdmin(admin.ModelAdmin):
-    list_display = ('technician', 'order', 'visit_type', 'start_time', 'end_time')
+    list_display = ('id','technician', 'order', 'visit_type', 'start_time', 'end_time')
     search_fields = ('technician__name__username', 'order__po_number', 'visit_type', 'status')
     list_filter = ('visit_type', 'start_time', 'end_time')
 
