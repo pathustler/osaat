@@ -1,7 +1,7 @@
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Timeline, Unit, Order
+from .models import Timeline, Unit, Order, TechnicianEvent
 
 class TimelineForm(forms.ModelForm):
     class Meta:
@@ -73,3 +73,7 @@ class UnitForm(forms.ModelForm):
         self.fields['pile_brush'].widget.attrs.update({'class': 'w-full p-2 border border-gray-300 rounded mb-1'})
 
     
+class EditTechnicianEventForm(forms.ModelForm):
+    class Meta:
+        model = TechnicianEvent
+        fields = ['confirmed', 'title', 'start_time', 'end_time', 'visit_type', 'crew']

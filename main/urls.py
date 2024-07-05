@@ -26,7 +26,7 @@ urlpatterns = [
     path('calendar/technician_calendar', views.technician_calendar, name='technician_calendar'),
     path('api/technician_events/', views.get_technician_events, name='get_technician_events'),
     path('calendar/technician_calendar/delete_event/<int:event_id>/', views.delete_technician_event, name='delete_technician_event'),
-    # path('calendar/update_event/', views.update_technician_event, name='update_technician_event'),
+    path('calendar/technician_calendar/update-event/<int:event_id>/', views.update_technician_event, name='update_technician_event'),
     
     path('calendar/sales_calendar', views.sales_calendar, name='sales_calendar'),
     path('calendar/delivery_calendar', views.delivery_calendar, name='delivery_calendar'),

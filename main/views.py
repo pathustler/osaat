@@ -1,7 +1,7 @@
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from .forms import CustomAuthenticationForm
+from .forms import CustomAuthenticationForm,EditTechnicianEventForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from .models import Customer ,Timeline, Order, Unit, TechnicianEvent
@@ -12,6 +12,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.dateparse import parse_datetime
+from django.db.models import Prefetch
 # Create your views here.
 
 @login_required
@@ -180,7 +182,8 @@ def calendar_index(request):
     return render(request, "calendar/index.html")
 @login_required
 def technician_calendar(request):
-    return render(request, 'calendar/technician_calendar.html')
+    a=0
+    return render(request, 'calendar/technician_calendar.html',{"a":a})
 @login_required
 def sales_calendar(request):
     return render(request, 'calendar/sales_calendar.html')
@@ -239,3 +242,17 @@ def delete_technician_event(request, event_id):
         return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
 
     return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
+
+
+
+def update_technician_event(request, event_id):
+    a=1
+    event = get_object_or_404(TechnicianEvent, id=event_id)
+    if request.method == 'POST':
+        form = EditTechnicianEventForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('technician_calendar'))
+    else:
+        form = EditTechnicianEventForm(instance=event)
+    return render(request, 'calendar/technician_calendar.html', {'form': form, 'event_id': event_id, "a":a,"event":event})
