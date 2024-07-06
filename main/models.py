@@ -198,16 +198,23 @@ class TechnicianEvent(models.Model):
         ('c2','Crew 2'),
         ('c3','Crew 3'),
     ]
-    
+    app_choices = [
+        (0,'Inactive'),
+        (1,'Active')
+    ]
     technician =  models.ForeignKey(Crew, on_delete=models.CASCADE)
     crew =  models.CharField(choices=crew_choices, max_length=20)
     confirmed = models.BooleanField(default=False)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="technician_events")
     visit_type = models.CharField(choices=visit_type_choices, max_length=100)
 
-    title = models.CharField(max_length=100)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+    
+    address = models.CharField(max_length=100)
+    main_phone = models.CharField(max_length=20)
+    appointment_status = models.BooleanField(choices=app_choices, default=0, null=False, blank=False)
+    appointment_notes = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.technician} - {self.order.po_number} {self.visit_type}"

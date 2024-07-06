@@ -1,19 +1,14 @@
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm,EditTechnicianEventForm
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
 from .models import Customer ,Timeline, Order, Unit, TechnicianEvent
 from django.shortcuts import render, get_object_or_404,redirect
 from .forms import TimelineForm, OrderForm, UnitForm
 from django.urls import reverse
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.dateparse import parse_datetime
-from django.db.models import Prefetch
+from django.db.models import Case, When, Value, IntegerField
 # Create your views here.
 
 @login_required
@@ -206,19 +201,27 @@ def get_technician_events(request):
         'service': 'Service',  # red
     }
     
-    events = TechnicianEvent.objects.all()
+    c1_events = TechnicianEvent.objects.filter(crew='c1').order_by('start_time')
+    c2_events = TechnicianEvent.objects.filter(crew='c2').order_by('start_time')
+    c3_events = TechnicianEvent.objects.filter(crew='c3').order_by('start_time')
+    other_events = TechnicianEvent.objects.exclude(crew__in=['c1', 'c2', 'c3']).order_by('start_time')
+
+    events = list(c2_events) + list(c1_events) + list(c3_events) + list(other_events)
+    
     events_data = []
 
     for event in events:
-        color = STATUS_COLORS.get(event.visit_type.lower(), '#555555')  
-
+        color = STATUS_COLORS.get(event.visit_type.lower(), '#eeeeee')  
+        if not event.appointment_status:
+            color = "#eeeeee"
         crew_name = event.technician.name.username 
         opo = event.order.po_number
         cust = event.order.customer.unique_code
+        cnum = event.crew[-1]
 
         events_data.append({
             'id': event.id,
-            'title': event.title,
+            'address': event.address,
             'start': event.start_time.isoformat(),
             'end': event.end_time.isoformat(),
             'color': color,
@@ -226,9 +229,11 @@ def get_technician_events(request):
             'order': event.order.po_number,  # assuming you have a po_number field in the Order model
             'visit_type': eventtypes[event.visit_type],    # to get the human-readable name of status
             'confirmed': event.confirmed,
+            "status":event.appointment_status,
             'crew_label': event.crew,
             'customer':cust,
-            'opo':opo
+            'opo':opo,
+            'cnum':cnum
         })
 
     return JsonResponse(events_data, safe=False)
