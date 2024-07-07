@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wasabi File Browser</title>
+    <style>
+        /* Add styles to make it look like the screenshot */
+        ul {
+            list-style-type: none;
+        }
+        .folder {
+            cursor: pointer;
+        }
+        .file {
+            margin-left: 20px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function loadFolderContents(folderPath, targetElement) {
+                $.ajax({
+                    url: '/storage/browser/contents/',
+                    data: {
+                        'folder_path': folderPath
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        updateFolderView(data, targetElement, folderPath);
+                    }
+                });
+            }
+
+            function updateFolderView(data, targetElement, parentPath) {
+                $(targetElement).empty();
+
+                // Display folders
+                data.folders.forEach(function (folder) {
+                    var fullPath = parentPath + '/' + folder;  // Full path of the folder
+                    var folderElement = $('<li class="folder" data-path="' + fullPath + '">' + folder + '</li>');
+                    var sublist = $('<ul></ul>');
+                    folderElement.append(sublist);
+                    folderElement.click(function (e) {
+                        e.stopPropagation();
+                        loadFolderContents(fullPath, sublist);
+                    });
+                    $(targetElement).append(folderElement);
+                });
+
+                // Display files
+                data.files.forEach(function (file) {
+                    $(targetElement).append('<li class="file">' + file + '</li>');
+                });
+            }
+
+            // Initial load
+            loadFolderContents('', $('#folders-list'));
+        });
+    </script>
+</head>
+<body>
+    <h1>Files and Folders in {{ bucket_name }}</h1>
+
+    <h2>Folders:</h2>
+    <ul id="folders-list" data-path=""></ul>
+</body>
+</html>

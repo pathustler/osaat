@@ -2,10 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 import random
 import string
-
+from .storages import WasabiStorage
+import datetime
 
 def generate_unique_code():
     return ''.join(random.choices(string.ascii_uppercase, k=3)) + ''.join(random.choices(string.digits, k=10))
+
+def customer_directory_path(instance, filename):
+    return f'documents/{instance.order.customer.unique_code}/{datetime.datetime.now().year}/{instance.order.po_number}/{filename}'
 
 class Customer(models.Model):
     primary_contact = models.CharField(max_length=255)
@@ -20,19 +24,12 @@ class Customer(models.Model):
     def __str__(self):
         return self.unique_code
 
-class WasabiGallery(models.Model):
-    customer = models.ForeignKey(Customer, related_name='wasabi_gallery', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='wasabi_gallery/')
-
-    def __str__(self):
-        return f"{self.customer.primary_contact} - Gallery Image"
-
 class Timeline(models.Model):
     TYPE_CHOICES = [
         ('ti', 'Technical Issues'),
         ('of', 'Order Finalized'),
         ('rma', 'RMA'),
-        ('other','Other')
+        ('other', 'Other')
     ]
     customer = models.ForeignKey(Customer, related_name='timeline', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -43,20 +40,24 @@ class Timeline(models.Model):
     def __str__(self):
         return f"{self.customer.primary_contact} - {self.timestamp}"
 
-class WasabiFile(models.Model):
-    customer = models.ForeignKey(Customer, related_name='wasabi_files', on_delete=models.CASCADE)
-    file = models.FileField(upload_to='wasabi_files/')
+class Document(models.Model):
+    file = models.FileField(storage=WasabiStorage(), upload_to='documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+class GalleryImage(models.Model):
+    image = models.ImageField(storage=WasabiStorage(), upload_to='gallery/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+class WasabiGallery(models.Model):
+    customer = models.ForeignKey(Customer, related_name='wasabi_gallery', on_delete=models.CASCADE)
+    image = models.ImageField(storage=WasabiStorage(), upload_to='gallery/')
 
     def __str__(self):
-        return f"{self.customer.primary_contact} - File"
-
-
-
-
+        return f"{self.customer.primary_contact} - Gallery Image"
 
 class Order(models.Model):
     ship_choices = [
-        ('OLD DOMINION','OLD DOMINION')
+        ('OLD DOMINION', 'OLD DOMINION')
     ]
     customer = models.ForeignKey(Customer, related_name='orders', on_delete=models.CASCADE)
     confirmed = models.BooleanField(default=False)
@@ -74,10 +75,13 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.po_number} for {self.account_name}"
-    
-    
-    
-    
+
+class CustomerFile(models.Model):
+    order = models.ForeignKey(Order, related_name='wasabi_files', on_delete=models.CASCADE)
+    file = models.FileField(storage=WasabiStorage(), upload_to=customer_directory_path)
+
+    def __str__(self):
+        return f"{self.order.customer.unique_code} - File"
 
 class Unit(models.Model):
     product_type_choices = [
@@ -159,19 +163,11 @@ class Unit(models.Model):
     def __str__(self):
         return f"Unit {self.unit_number}, Order {self.order.po_number}, Customer {self.order.customer.unique_code}"
 
-
-
-
-
-
-
-
-
 class Crew(models.Model):
     char_choices = [
-        ('technician','Technician'),
-        ('sales','Sales'),
-        ('delivery','Delivery')
+        ('technician', 'Technician'),
+        ('sales', 'Sales'),
+        ('delivery', 'Delivery')
     ]
     name = models.ForeignKey(User, related_name='units', on_delete=models.CASCADE)
     crew_type = models.CharField(choices=char_choices, max_length=60)
@@ -179,31 +175,30 @@ class Crew(models.Model):
     def __str__(self):
         return f"{self.name} ({self.crew_type})"
 
-
 class TechnicianEvent(models.Model):
     statusoptions = [
-        ('active','Active'),
-        ('estimate','Estimate'),
-        ('sold','Sold'),
-        ('cancelled','Cancelled')
+        ('active', 'Active'),
+        ('estimate', 'Estimate'),
+        ('sold', 'Sold'),
+        ('cancelled', 'Cancelled')
     ]
     visit_type_choices = [
-        ('installation','Installation'),
-        ('warranty','Warranty Serice'),
-        ('tech','Tech Measure'),
-        ('service','Service')
+        ('installation', 'Installation'),
+        ('warranty', 'Warranty Service'),
+        ('tech', 'Tech Measure'),
+        ('service', 'Service')
     ]
     crew_choices = [
-        ('c1','Crew 1'),
-        ('c2','Crew 2'),
-        ('c3','Crew 3'),
+        ('c1', 'Crew 1'),
+        ('c2', 'Crew 2'),
+        ('c3', 'Crew 3'),
     ]
     app_choices = [
-        (0,'Inactive'),
-        (1,'Active')
+        (0, 'Inactive'),
+        (1, 'Active')
     ]
-    technician =  models.ForeignKey(Crew, on_delete=models.CASCADE)
-    crew =  models.CharField(choices=crew_choices, max_length=20)
+    technician = models.ForeignKey(Crew, on_delete=models.CASCADE)
+    crew = models.CharField(choices=crew_choices, max_length=20)
     confirmed = models.BooleanField(default=False)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="technician_events")
     visit_type = models.CharField(choices=visit_type_choices, max_length=100)
@@ -218,13 +213,13 @@ class TechnicianEvent(models.Model):
 
     def __str__(self):
         return f"{self.technician} - {self.order.po_number} {self.visit_type}"
-    
+
 class SalesEvent(models.Model):
     statusoptions = [
-        ('Active','active'),
-        ('Estimate','estimate'),
-        ('Sold','sold'),
-        ('Cancelled','cancelled')
+        ('Active', 'active'),
+        ('Estimate', 'estimate'),
+        ('Sold', 'sold'),
+        ('Cancelled', 'cancelled')
     ]
     
     salesperson = models.ForeignKey(Crew, on_delete=models.CASCADE)
@@ -233,28 +228,24 @@ class SalesEvent(models.Model):
     main_phone = models.CharField(max_length=20)
     address = models.CharField(max_length=100)
     appointment_notes = models.TextField(blank=True, null=True)
-    status = models.CharField(choices=statusoptions,max_length=100)
-    title = models.CharField(max_length=100)
+    status = models.CharField(choices=statusoptions, max_length=100)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
     def __str__(self):
         return f"{self.salesperson} - {self.order.po_number} {self.title}"
 
-
 class GroupedJob(models.Model):
     statusoptions = [
-        ('Delivered','delivered'),
-        ('Not Delivered','notdelivered'),
-        ('Missing Part','missing'),
+        ('Delivered', 'delivered'),
+        ('Not Delivered', 'notdelivered'),
+        ('Missing Part', 'missing'),
     ]
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="delivery_jobs")
     title = models.CharField(max_length=60)
     done = models.BooleanField(default=False)
 
 class DeliveryEvent(models.Model):
-   
-    
     title = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
     special_instructions = models.TextField(blank=True, null=True)
@@ -263,6 +254,4 @@ class DeliveryEvent(models.Model):
     jobs = models.ManyToManyField(GroupedJob, related_name="delivery_events")
 
     def __str__(self):
-        return f"{self.salesperson} - {self.order.po_number} {self.title}"
-    
-
+        return f"{self.title} - Delivery Event"

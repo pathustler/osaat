@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -164,6 +165,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CRSF_TRUSTED_ORIGINS = ["osaat.azurewebsites.net"]
+
+
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+AWS_ACCESS_KEY_ID = 'QR6742FGC8OZIVIZYQY7'
+AWS_SECRET_ACCESS_KEY = 'zd2Yt05DgzVryZzbNHI7ISOBnf7Irg34aJjwDGRp'
+AWS_STORAGE_BUCKET_NAME = 'swsc'
+AWS_S3_ENDPOINT_URL = 'https://s3.us-west-1.wasabisys.com'
+AWS_S3_REGION_NAME = 'us-west-1'  # or your Wasabi bucket region
+AWS_QUERYSTRING_AUTH = True  # To allow public access
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

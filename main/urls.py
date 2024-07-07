@@ -31,6 +31,12 @@ urlpatterns = [
     path('calendar/sales_calendar', views.sales_calendar, name='sales_calendar'),
     path('calendar/delivery_calendar', views.delivery_calendar, name='delivery_calendar'),
     
+    #STORAGE
+    path('storage/documents/', views.document_list, name='document_list'),
+    path('storage/gallery/', views.gallery, name='gallery'),
+    path('storage/browser/', views.file_browser, name='file_browser'),
+    path('storage/browser/contents/', views.folder_contents, name='folder_contents'),
+    
   
     
 ]

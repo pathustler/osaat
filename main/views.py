@@ -2,14 +2,21 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm,EditTechnicianEventForm
 from django.contrib.auth.decorators import login_required
-from .models import Customer ,Timeline, Order, Unit, TechnicianEvent
+from .models import Customer ,Timeline, Order, Unit, TechnicianEvent,Document, GalleryImage
 from django.shortcuts import render, get_object_or_404,redirect
 from .forms import TimelineForm, OrderForm, UnitForm
 from django.urls import reverse
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Case, When, Value, IntegerField
+import boto3
+from django.conf import settings
+from django.core.files.storage import default_storage
+
 # Create your views here.
+
+
+
 
 @login_required
 def index(request):
@@ -38,14 +45,33 @@ def timeline_create(request, unique_code):
     return render(request, 'main/timeline_form.html', {'form': form})
 
 
-
 @login_required
 def customer(request, unique_code):
     customer = get_object_or_404(Customer, unique_code=unique_code)
     timelines = customer.timeline.all()[::-1]
     orders = customer.orders.filter(confirmed=True)
-    return render(request, 'main/customer.html', {"customer":customer, "timelines":timelines, "orders":orders})
+    base_prefix = f'documents/{customer.unique_code}/'
+    prefix = request.GET.get('prefix', base_prefix)
+    
+    bucket_name = 'swsc'
+    root_folder = 'documents'  # Start browsing from the documents folder
 
+    # Listing files and folders in the root_folder
+    contents = default_storage.listdir(root_folder)
+    files = [file for file in contents[1] if file.startswith(root_folder)]  # Filter files to start with documents
+    folders = [folder for folder in contents[0] if folder.startswith(root_folder)]  # Filter folders to start with documents
+
+    return render(request, 'main/customer.html', {
+        "customer": customer, 
+        "timelines": timelines, 
+        "orders": orders,
+        'folders': folders,
+        'files': files,
+        'current_prefix': prefix,
+        'base_prefix': base_prefix,
+        'bucket_name': bucket_name,
+        'root_folder': root_folder,
+    })
 
 
 
@@ -261,3 +287,44 @@ def update_technician_event(request, event_id):
     else:
         form = EditTechnicianEventForm(instance=event)
     return render(request, 'calendar/technician_calendar.html', {'form': form, 'event_id': event_id, "a":a,"event":event})
+
+
+def document_list(request):
+    documents = Document.objects.all()
+    return render(request, 'storage/document_list.html', {'documents': documents})
+
+def gallery(request):
+    images = GalleryImage.objects.all()
+    return render(request, 'storage/gallery.html', {'images': images})
+
+
+def file_browser(request):
+    bucket_name = 'swsc'
+    root_folder = 'documents'  # Start browsing from the root
+
+    # Initial listing of files and folders in the root folder
+    contents = default_storage.listdir(root_folder)
+    files = contents[1]  # list of files
+    folders = contents[0]  # list of folders
+
+    return render(request, 'storage/file_browser.html', {
+        'bucket_name': bucket_name,
+        'root_folder': root_folder,
+        'files': files,
+        'folders': folders,
+    })
+
+def folder_contents(request):
+    folder_path = request.GET.get('folder_path', '')
+
+    # List files and folders in the specified folder_path
+    contents = default_storage.listdir(folder_path)
+    files = contents[1]
+    print(contents)
+    folders = contents[0]
+
+    data = {
+        'files': files,
+        'folders': folders,
+    }
+    return JsonResponse(data)
