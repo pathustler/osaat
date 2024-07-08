@@ -15,6 +15,18 @@ from django.core.files.storage import default_storage
 
 # Create your views here.
 
+def generate_signed_url(key, expires_in=3600):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+    )
+    return s3_client.generate_presigned_url(
+        'get_object',
+        Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': key},
+        ExpiresIn=expires_in
+    )
 
 
 
@@ -61,6 +73,21 @@ def customer(request, unique_code):
     files = [file for file in contents[1] if file.startswith(root_folder)]  # Filter files to start with documents
     folders = [folder for folder in contents[0] if folder.startswith(root_folder)]  # Filter folders to start with documents
 
+
+    wasabi_gallery_images = customer.wasabi_gallery.all().order_by('uploaded_at')
+    grouped_images = {}
+    
+    for image in wasabi_gallery_images:
+        image.signed_url = generate_signed_url(image.image.name)
+        upload_date = image.uploaded_at.date()
+        if upload_date not in grouped_images:
+            grouped_images[upload_date] = []
+        grouped_images[upload_date].append(image)
+        
+    grouped_images = dict(sorted(grouped_images.items(), reverse=True))
+
+        
+
     return render(request, 'main/customer.html', {
         "customer": customer, 
         "timelines": timelines, 
@@ -71,6 +98,7 @@ def customer(request, unique_code):
         'base_prefix': base_prefix,
         'bucket_name': bucket_name,
         'root_folder': root_folder,
+        'grouped_images': grouped_images,
     })
 
 
@@ -295,6 +323,8 @@ def document_list(request):
 
 def gallery(request):
     images = GalleryImage.objects.all()
+    for image in images:
+        image.signed_url = generate_signed_url(image.image.name)
     return render(request, 'storage/gallery.html', {'images': images})
 
 

@@ -11,6 +11,9 @@ def generate_unique_code():
 def customer_directory_path(instance, filename):
     return f'documents/{instance.order.customer.unique_code}/{datetime.datetime.now().year}/{instance.order.po_number}/{filename}'
 
+def customer_gallery_path(instance, filename):
+    return f'documents/{instance.customer.unique_code}/gallery/{filename}'
+
 class Customer(models.Model):
     primary_contact = models.CharField(max_length=255)
     main = models.CharField(max_length=255, blank=True, null=True)
@@ -48,9 +51,10 @@ class GalleryImage(models.Model):
     image = models.ImageField(storage=WasabiStorage(), upload_to='gallery/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
-class WasabiGallery(models.Model):
+class CustomerGalleryImage(models.Model):
     customer = models.ForeignKey(Customer, related_name='wasabi_gallery', on_delete=models.CASCADE)
-    image = models.ImageField(storage=WasabiStorage(), upload_to='gallery/')
+    image = models.ImageField(storage=WasabiStorage(), upload_to=customer_gallery_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.customer.primary_contact} - Gallery Image"

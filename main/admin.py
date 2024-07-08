@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Customer, WasabiGallery, Timeline, CustomerFile, Order,Unit, Crew, TechnicianEvent, SalesEvent, GroupedJob, DeliveryEvent, Document,GalleryImage
+from .models import Customer, CustomerGalleryImage, Timeline, CustomerFile, Order,Unit, Crew, TechnicianEvent, SalesEvent, GroupedJob, DeliveryEvent, Document,GalleryImage
 
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'display_groups')
@@ -49,7 +49,7 @@ class DeliveryEventAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Customer)
-admin.site.register(WasabiGallery)
+admin.site.register(CustomerGalleryImage)
 admin.site.register(Timeline)
 admin.site.register(CustomerFile)
 admin.site.register(Order)

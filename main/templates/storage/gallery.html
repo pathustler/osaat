@@ -8,7 +8,7 @@
     <div class="gallery">
         {% for image in images %}
             <div class="image">
-                <img src="{{ image.image.url }}" alt="Image">
+                <img src="{{ image.signed_url }}" alt="Image">
             </div>
         {% endfor %}
     </div>
