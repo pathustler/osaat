@@ -73,11 +73,17 @@ def customer(request, unique_code):
     files = [file for file in contents[1] if file.startswith(root_folder)]  # Filter files to start with documents
     folders = [folder for folder in contents[0] if folder.startswith(root_folder)]  # Filter folders to start with documents
 
+    # Generate signed URLs for each file
+    signed_urls = {}
+    for file in files:
+        key = root_folder + file
+        signed_urls[file] = generate_signed_url(key)
 
     wasabi_gallery_images = customer.wasabi_gallery.all().order_by('uploaded_at')
     grouped_images = {}
     
     for image in wasabi_gallery_images:
+        print("GALLERY : ",image.image.name)
         image.signed_url = generate_signed_url(image.image.name)
         upload_date = image.uploaded_at.date()
         if upload_date not in grouped_images:
@@ -85,8 +91,6 @@ def customer(request, unique_code):
         grouped_images[upload_date].append(image)
         
     grouped_images = dict(sorted(grouped_images.items(), reverse=True))
-
-        
 
     return render(request, 'main/customer.html', {
         "customer": customer, 
@@ -99,8 +103,32 @@ def customer(request, unique_code):
         'bucket_name': bucket_name,
         'root_folder': root_folder,
         'grouped_images': grouped_images,
+        'signed_urls': signed_urls,  # Pass signed URLs to the template
     })
+    
+    
+def folder_contents(request):
+    folder_path = request.GET.get('folder_path', '')
 
+    # List files and folders in the specified folder_path
+    contents = default_storage.listdir(folder_path)
+    files = contents[1]
+    folders = contents[0]
+
+    data = {
+        'files': [],
+        'folders':folders
+    }
+
+    for file_name in files:
+        key = folder_path+"/"+file_name
+        if "//" in key:
+            key = key.replace("//","/")
+        print("FOR VIEWER FILES : ",key)
+        signed_url = generate_signed_url(key)
+        data['files'].append([file_name, signed_url])
+
+    return JsonResponse(data)
 
 
 def login_view(request):
@@ -344,17 +372,3 @@ def file_browser(request):
         'folders': folders,
     })
 
-def folder_contents(request):
-    folder_path = request.GET.get('folder_path', '')
-
-    # List files and folders in the specified folder_path
-    contents = default_storage.listdir(folder_path)
-    files = contents[1]
-    print(contents)
-    folders = contents[0]
-
-    data = {
-        'files': files,
-        'folders': folders,
-    }
-    return JsonResponse(data)

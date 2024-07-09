@@ -306,9 +306,10 @@
     }
 
     .file {
-        cursor: default;
+        cursor: pointer;
         margin-left: 20px; /* Indent files under subfolders */
         margin-bottom: 8px;
+
     }
 
     .subfolder {
@@ -383,12 +384,12 @@
 
     if (isFolderClick && targetElement.attr('id') !== 'folders-list') {
         data.files.forEach(function (file) {
-            if (file.endsWith('.pdf')) {
-                var fileElement = $('<li class="file flex flex-row gap-3">' + ' <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/1667px-PDF_file_icon.svg.png" class="h-6">'+ file+ '</li>' );
-            }else if (file.endsWith('.jpg') ||file.endsWith('.png')||file.endsWith('.jpeg') ) {
-                var fileElement = $('<li class="file flex flex-row gap-3">' + ' <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2HY7nWjTlI-QqOx2lK3oPQc2PuikkOO3g-MTRa68WUnpzl4ss9CsRMsjt5pLCbjgzxlk&usqp=CAU" class="h-6">'+ file+ '</li>' );
+            if (file[0].endsWith('.pdf')) {
+                var fileElement = $(`<a href="${file[1]}" target="_blank"><li class="file flex flex-row gap-3 hover:bg-gray-200 cursor-pointer"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/1667px-PDF_file_icon.svg.png" class="h-6">${file[0]}</li>` );
+            }else if (file[0].endsWith('.jpg') ||file[0].endsWith('.png')||file[0].endsWith('.jpeg') ) {
+                var fileElement =  $('<a href="'+file[1]+'" target="_blank"><li class="file flex flex-row gap-3">' + ' <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2HY7nWjTlI-QqOx2lK3oPQc2PuikkOO3g-MTRa68WUnpzl4ss9CsRMsjt5pLCbjgzxlk&usqp=CAU" class="h-6">'+ file[0]+ '</li></a>' );
             } else {
-                var fileElement = $('<li class="file flex flex-row gap-3">' + ' <img src="https://uxwing.com/wp-content/themes/uxwing/download/file-and-folder-type/page-file-icon.png" class="h-6">'+ file+ '</li>' );
+                var fileElement = $('<a href="'+file[1]+'" target="_blank"><li class="file flex flex-row gap-3">' + ' <img src="https://uxwing.com/wp-content/themes/uxwing/download/file-and-folder-type/page-file-icon.png" class="h-6">'+ file[0]+ '</li></a>' );
             }
             $('#files-list').append(fileElement);
         });
