@@ -220,10 +220,10 @@ class TechnicianEvent(models.Model):
 
 class SalesEvent(models.Model):
     statusoptions = [
-        ('Active', 'active'),
-        ('Estimate', 'estimate'),
-        ('Sold', 'sold'),
-        ('Cancelled', 'cancelled')
+        ('active', 'Active'),
+        ('estimate', 'Estimate'),
+        ('sold', 'Sold'),
+        ('cancelled', 'Cancelled')
     ]
     
     salesperson = models.ForeignKey(Crew, on_delete=models.CASCADE)
@@ -239,23 +239,32 @@ class SalesEvent(models.Model):
     def __str__(self):
         return f"{self.salesperson} - {self.order.po_number} {self.title}"
 
-class GroupedJob(models.Model):
+class Job(models.Model):
     statusoptions = [
-        ('Delivered', 'delivered'),
-        ('Not Delivered', 'notdelivered'),
-        ('Missing Part', 'missing'),
+        ('delivered', 'Delivered'),
+        ('notdelivered', 'Not Delivered'),
+        ('missing', 'Missing Part'),
     ]
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="delivery_jobs")
     title = models.CharField(max_length=60)
-    done = models.BooleanField(default=False)
+    status = models.CharField(default=False, choices=statusoptions,max_length=100)
+    def __str__(self):
+        return f"{self.order} - {self.title}"
+
 
 class DeliveryEvent(models.Model):
+    routeoptions=[
+        ('azloop', 'AZ Loop'),
+        ('route1', 'Route 1'),
+    ]
     title = models.CharField(max_length=100)
+    main_phone = models.CharField(max_length=20)
     address = models.CharField(max_length=100)
     special_instructions = models.TextField(blank=True, null=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    jobs = models.ManyToManyField(GroupedJob, related_name="delivery_events")
+    start_time = models.DateTimeField(blank=True, null=True)
+    end_time = models.DateTimeField(blank=True, null=True)
+    jobs = models.ManyToManyField(Job, related_name="delivery_events")
+    route = models.CharField(choices=routeoptions, max_length=100)
 
     def __str__(self):
         return f"{self.title} - Delivery Event"

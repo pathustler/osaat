@@ -7,61 +7,390 @@
 
 {% block content %}
 <div class="container mx-auto p-4">
-    <div class="flex space-x-4 mb-4" id="calendarTabs">
-        <a href="{% url 'technician_calendar' %}"><button class="tab-link py-2 px-4 bg-gray-300 text-black rounded" id="technician-tab" data-tab="technician">Technician</button></a>
-        <a href="{% url 'sales_calendar' %}"><button class="tab-link py-2 px-4 bg-gray-300 text-black rounded" id="sales-tab" data-tab="sales">Sales</button></a>
-        <a href="{% url 'delivery_calendar' %}"> <button class="tab-link py-2 px-4 bg-blue-500 text-white rounded" id="delivery-tab" data-tab="delivery">Delivery</button></a>
-    </div>
-    <div class="tab-content">
-        <div class="tab-pane" id="technician-calendar"></div>
-        <div class="tab-pane" id="sales-calendar" style="display: none;"></div>
-        <div class="tab-pane" id="delivery-calendar" style="display: none;"></div>
+    <div class="flex w-full gap-4">
+
+
+        <div class="w-1/5 border-2 border-gray-200 rounded-lg overflow-hidden" >
+            <p class="font-lg font-semibold p-4 text-center text-gray-800 border-b-2 bg-white border-gray-200">Not Scheduled</p>
+            <div class="flex flex-col p-4 gap-4 overflow-y-auto" style="height: 65vh;">
+                {% for event in unscheduled %}
+                <div class="group w-full px-4 py-2 bg-gray-300 text-gray-500 cursor-pointer opacity-75 hover:opacity-100" style="border: 2px solid #bbbbbb; border-radius: 10px;">
+                    
+                    <div class="flex justify-between items-center">
+                        
+                        <div >
+                            <div class="event-order font-semibold" style="font-size:12px">{{event.title}}</div>
+                        </div>
+                        <div class="event-order" style="font-size:10px">{{event.get_route_display}}</div>
+                    </div>
+
+                    {% for job in event.jobs.all %}
+
+                        <div class="event-order font-semibold my-1" style="font-size:12px">#{{job.order.po_number}}</div>
+
+                    {% endfor %}
+
+                    
+                   
+                    <div class="justify-between w-full flex ">
+                        {% if event.start_time|date:"Y-m-d" %}
+                            <div class="event-order" style="font-size:12px">{{ event.start_time|date:"Y-m-d" }}</div>
+                        {% else %}
+                            <div class="event-order " style="font-size:12px">Date Unset</div>
+                        {% endif %}
+                        
+                        <a href="{% url 'schedule_delivery_event' event.id %}">
+                            <button  class="bg-gray-800 opacity-0  group-hover:opacity-100 h-6 w-6 flex items-center text-center justify-center rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                              </svg>
+                              
+                        </button>
+                        </a>
+                        
+                        
+                    </div>
+                    
+                </div>
+                
+                
+                
+               
+                
+                    
+
+                {% endfor %}
+            </div>
+        </div>
+
+
+        <div class="w-full">
+            
+        
+        <div class="flex space-x-4 mb-4" id="calendarTabs">
+            <a href="{% url 'technician_calendar' %}"><button class="tab-link py-2 px-4 bg-gray-300 text-black rounded" id="technician-tab" data-tab="technician">Technician</button></a>
+            <a href="{% url 'sales_calendar' %}"><button class="tab-link py-2 px-4 bg-gray-300 text-black rounded" id="sales-tab" data-tab="sales">Sales</button></a>
+            <a href="{% url 'delivery_calendar' %}"><button class="tab-link py-2 px-4 bg-blue-500 text-white rounded" id="delivery-tab" data-tab="delivery">Delivery</button></a>
+        </div>
+        <div class="tab-content">
+        
+                
+                <div class="tab-pane w-full" id="technician-calendar">
+
+                </div>
+         </div>
+        </div>
     </div>
 </div>
+
+
+{% if a == 2 %}
+
+<div class="absolute bg-white border-4 border-gray-200 z-50 top-1/2 left-1/2 py-8 w-1/3 px-8 rounded-xl shadow-xl transform -translate-x-1/2 -translate-y-1/2">
+    <h1 class="text-2xl font-bold mb-4 text-center">SCHEDULE EVENT</h1>
+    <form method="post" class="mt-6" action="{% url 'schedule_delivery_event' event_id %}">
+        {% csrf_token %}
+        <div class="flex justify-between my-2">
+            <div class="w-full">
+            <p class="text-gray-800 text-sm my-2 font-semibold">START TIME</p>
+            {{ form.start_time.errors }}
+            {{ form.start_time }}
+            </div>
+        
+            <div class="w-full">
+                <p class="text-gray-800 text-sm my-2 font-semibold">END TIME</p>
+                {{ form.end_time.errors }}
+                {{ form.end_time }}
+            </div>
+        
+        </div>
+        
+        <div class="mt-6 flex justify-between">
+        <button url="{% url 'delivery_calendar' %}" class=" bg-gray-200 text-black px-4 py-2 rounded-lg w-24 text-center">Cancel</button>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 w-24 text-center hover:bg-blue-600 rounded-lg">Save</button>
+   
+        </div>
+       
+    </form>
+</div>
+
+
+
+{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr('.datetimepicker', {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+            });
+        });
+    </script>
+
+{% if a == 1 %}
+
+
+<div class="bg-white border-4 border-gray-200 z-50 bottom-4 right-4  py-8 absolute  w-1/3 px-8 rounded-xl shadow-xl ">
+    <h1 class="text-2xl font-bold mb-4 text-center">EDIT EVENT</h1>
+    <form method="post" class="mt-6" action="{% url 'update_delivery_event' event_id %}">
+        {% csrf_token %}
+        <p class="text-gray-800 text-lg my-2 font-semibold">{{event.technician.name}}</p>
+        <div class="flex justify-between my-2">
+            <div class="w-full">
+            <p class="text-gray-800 text-sm my-2 font-semibold">START TIME</p>
+            {{ form.start_time.errors }}
+            {{ form.start_time }}
+            </div>
+        
+            <div class="w-full">
+                <p class="text-gray-800 text-sm my-2 font-semibold">END TIME</p>
+                {{ form.end_time.errors }}
+                {{ form.end_time }}
+            </div>
+        
+        </div>
+        <div class="flex justify-between my-2">
+        <div class="w-full">
+            <p class="text-gray-800 text-sm my-2 font-semibold">ADDRESS</p>
+            {{ form.address.errors }}
+            {{ form.address }}
+        </div>
+        
+        <div class="w-full">
+            <p class="text-gray-800 text-sm my-2 font-semibold">MAIN PHONE #</p>
+            {{ form.main_phone.errors }}
+            {{ form.main_phone }}
+        </div>
+        </div>
+        <div class="my-2">
+            <p class="text-gray-800 text-sm my-2 font-semibold">GROUPED JOBS</p>
+
+            {% for i in jobforms  %}
+            <div class="flex justify-between my-2 gap-4 items-center">
+                
+                <div class="w-full">
+                    {% if i.1.status.value == "delivered"  %}
+                    <p class="text-gray-800 text-sm font-semibold line-through">{{i.0}}</p>
+                    {% else %}
+                    <p class="text-gray-800 text-sm font-semibold">{{i.0}}</p>
+
+                    {% endif %}
+                
+                </div>
+            
+                <div class="w-full">
+                    <p class="text-gray-800 text-sm font-semibold">{{i.1.title}}</p>
+                    
+                </div>
+                <div class="w-full">
+                    <p class="text-gray-800 text-sm font-semibold">{{i.1.status}}</p>
+                    
+                </div>
+                
+            </div>
+            {%  endfor %}
+        </div>
+        
+        <div class="flex justify-between my-2">
+            <div class="w-full">
+                <p class="text-gray-800 text-sm my-2 font-semibold">ROUTE</p>
+                {{ form.route.errors }}
+                {{ form.route }}
+            </div>
+        
+        </div>
+        <div class="mt-4">
+            <p class="text-gray-800 text-sm my-2 font-semibold">APPOINTMENT NOTES</p>
+            {{ form.special_instructions.errors }}
+            {{ form.special_instructions }}
+        </div>
+        <div class="mt-6 flex justify-between">
+        <button url="{% url 'delivery_calendar' %}" class=" bg-gray-200 text-black px-4 py-2 rounded-lg w-24 text-center">Cancel</button>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 w-24 text-center hover:bg-blue-600 rounded-lg">Save</button>
+   
+        </div>
+       
+    </form>
+</div>
+
+
+
+{% endif %}
+  
 {% endblock %}
 
 {% block script %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr('.datetimepicker', {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+    });
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
 
 <script>
+    function openEditForm(eventId) {
+    window.location.href = `delivery_calendar/update-event/${eventId}/`;
+}
+
     document.addEventListener('DOMContentLoaded', function() {
-        var technicianCalendar, salesCalendar, deliveryCalendar;
+        var technicianCalendar;
 
         function renderTechnicianCalendar() {
             if (!technicianCalendar) {
                 var calendarElTechnician = document.getElementById('technician-calendar');
                 technicianCalendar = new FullCalendar.Calendar(calendarElTechnician, {
-                    initialView: 'timeGridWeek',
-                    height: '65vh',
+                    initialView: 'dayGridWeek',
+                    height: 'auto',
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
-                        right: 'timeGridWeek,timeGridDay'
+                        right: ''
                     },
                     events: {
-                        url: '{% url "get_technician_events" %}',
+                        url: '{% url "get_delivery_events" %}',
                         method: 'GET',
                         failure: function() {
                             alert('there was an error while fetching events!');
                         }
                     },
-                    eventRender: function(info) {
-                        var crewName = info.event.extendedProps.crew;
-                        info.el.querySelector('.fc-title').innerHTML += '<br/><span class="fc-crew">' + crewName + '</span>';
+                    eventContent: function(arg) {
+    var crewName = arg.event.extendedProps.crew;
+    var startTime = arg.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    var endTime = arg.event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    var timeRange = startTime + ' - ' + endTime;
+
+    var orderUrl = `{% url 'orderinfo' 'dummy_customer' 'dummy_opo' %}`.replace('dummy_customer', arg.event.extendedProps.customer).replace('dummy_opo', arg.event.extendedProps.opo);
+    var deleteUrl = `{% url 'delete_delivery_event' event_id=0 %}`.replace('0', arg.event.id);
+    var editUrl = `{% url 'update_delivery_event' 0 %}`.replace('0', arg.event.id);
+    var opacity = "opacity-100"
+    var groupedjobscomp = ""
+    var ordercomp = ""
+    var confirmedicon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-3 h-3"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" /></svg>'
+    if (arg.event.extendedProps.status){
+        opacity = "opacity-100"
+    } else {
+        opacity = "opacity-50"
+    }
+    
+
+    if (arg.event.extendedProps.confirmed==true){
+        confirmedicon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="green" class="h-3 w-3"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>'
+        
+    } else {
+        confirmedicon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="red" class="h-3 w-3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>'
+
+    }
+
+    if (arg.event.extendedProps.group){
+        groupedjobscomp=`<p class="font-semibold" style="font-size:10px">Grouped Jobs</p>`
+        arg.event.extendedProps.jobs.forEach(job => {
+            groupedjobscomp+=`<p class="text-xs"  style="font-size:9px"><b>${job[2]} : </b>${job[0]}</p>`
+        });
+    } else {
+        arg.event.extendedProps.jobs.forEach(job => {
+            ordercomp+=`<p class="text-xs"  style="font-size:9px">#${job[2]}</p>`
+        });
+    }
+
+    var titleEl = document.createElement('div');
+    titleEl.classList.add('fc-event-title');
+    titleEl.classList.add('cursor-pointer');
+    titleEl.innerHTML = `
+        <div class="px-4 py-2">
+            <div>
+            <div class="flex justify-between items-center">
+                <a href="${orderUrl}">
+                    <div class="event-order font-semibold" style="font-size:9px">${arg.event.extendedProps.units} Units</div>
+                </a>
+                <div style="background-color:${arg.event.extendedProps.statuscolor}" class="bg-white h-2 w-2 flex items-center justify-center rounded-full">
+                   
+                </div>
+
+                
+            </div>
+            <div class="event-crew text-sm font-semibold"  style="font-size:12px">${arg.event.title}</div>
+            <div class="text-xs"  style="font-size:9px">
+                ${ordercomp}
+            </div> 
+            <div class="event-time-range text-xs font-semibold mt-1"  style="font-size:9px">${timeRange}</div>
+            <div class="text-xs my-1  style="font-size:9px">
+                ${groupedjobscomp}
+            </div>    
+            </div>
+            <div class="flex justify-between items-center gap-4 mt-2 opacity-100">
+                <form method="post" action="${deleteUrl}">
+                {% csrf_token %}
+                <button type="submit" class="text-red-600 hover:text-red-700 cursor-pointer font-semibold">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="h-3">
+                        <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                </form>
+                <button class="edit-btn text-black cursor-pointer font-semibold" data-event-id="${arg.event.id}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-3">
+                        <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                        <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    `;
+
+    titleEl.querySelector('.edit-btn').addEventListener('click', function() {
+        openEditForm(arg.event.id);
+    });
+
+    return { domNodes: [titleEl] };
+},
+
+                    eventDidMount: function(info) {
+                        info.el.style.backgroundColor = info.event.backgroundColor;
+                        info.el.style.margin = "5px";
+                        info.el.style.border = "2px solid #aaaaaa";
+                        info.el.style.borderRadius = "15px"
                     }
                 });
                 technicianCalendar.render();
             }
         }
 
-       
-        
-
         renderTechnicianCalendar();
-    
-
-
     });
 </script>
+
 {% endblock %}
+
+<style>
+    .fc-event {
+        background-color: #ffebcd !important;
+        color: #000 !important;
+        border: 1px solid #ccc !important;
+        padding: 5px !important;
+        border-radius: 5px !important;
+        box-shadow: none !important;
+    }
+    .fc-event-title {
+        display: flex;
+        flex-direction: column;
+    }
+    .fc-event-title .event-id {
+        font-weight: bold;
+    }
+    .fc-event-title .event-technician {
+        font-size: 1.1em;
+    }
+    .fc-event-title .event-order {
+        font-size: 0.9em;
+    }
+    .fc-event-title .event-crew,
+    .fc-event-title .event-time-range {
+        font-size: 0.8em;
+        margin-top: 2px;
+    }
+</style>

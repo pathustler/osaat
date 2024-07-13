@@ -2,13 +2,13 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm,EditTechnicianEventForm
 from django.contrib.auth.decorators import login_required
-from .models import Customer ,Timeline, Order, Unit, TechnicianEvent,Document, GalleryImage
+from .models import Customer ,Timeline, Order, Unit, TechnicianEvent,Document, GalleryImage, SalesEvent, DeliveryEvent
 from django.shortcuts import render, get_object_or_404,redirect
-from .forms import TimelineForm, OrderForm, UnitForm
+from .forms import TimelineForm, OrderForm, UnitForm, EditSalesEventForm, EditDeliveryEventForm,EditJobForm, ScheduleDeliveryEventForm
 from django.urls import reverse
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.db.models import Case, When, Value, IntegerField
+from django.db.models import Q
 import boto3
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -263,10 +263,18 @@ def technician_calendar(request):
     return render(request, 'calendar/technician_calendar.html',{"a":a})
 @login_required
 def sales_calendar(request):
+    a=0
     return render(request, 'calendar/sales_calendar.html')
 @login_required
 def delivery_calendar(request):
-    return render(request, 'calendar/delivery_calendar.html')
+    a=0
+    unscheduled = DeliveryEvent.objects.filter(Q(start_time__isnull=True) | Q(end_time__isnull=True))
+    alljobs = dict()
+    for event in unscheduled:
+        alljobs[event.id] = list(event.jobs.all())
+    for job in alljobs:
+        print(job)
+    return render(request, 'calendar/delivery_calendar.html', {"unscheduled":unscheduled, "alljobs":alljobs,"a":a})
 
 def get_technician_events(request):
     STATUS_COLORS = {
@@ -321,6 +329,82 @@ def get_technician_events(request):
     return JsonResponse(events_data, safe=False)
 
 
+
+def get_sales_events(request):
+    STATUS_COLORS = {
+        'active': '#badbbb',  # green
+        'estimate': '#eeeeee',  # gray
+        'sold': '#62cade',  # blue
+        'cancelled': '#e2a361',  # red
+    }
+
+    events = SalesEvent.objects.all().order_by('start_time')
+    events_data = []
+
+    for event in events:
+        color = STATUS_COLORS.get(event.status, '#eeeeee')
+        events_data.append({
+            'id': event.id,
+            'salesperson': event.salesperson.name.username,  # Assuming Crew model has a 'name' related to User model
+            'order': event.order.po_number,  # Assuming Order model has a 'po_number' field
+            'title': event.title,
+            'main_phone': event.main_phone,
+            'address': event.address,
+            'appointment_notes': event.appointment_notes,
+            'status': event.status,
+            'start': event.start_time.isoformat(),
+            'end': event.end_time.isoformat(),
+            'color': color,
+        })
+
+    return JsonResponse(events_data, safe=False)
+
+
+def get_delivery_events(request):
+    STATUS_COLORS = {
+        'azloop': '#f8be4e',  # orange
+        'route1': '#81c897',  # green
+    }
+
+    events = DeliveryEvent.objects.filter(Q(start_time__isnull=False) & Q(end_time__isnull=False)).order_by('start_time')
+    events_data = []
+
+    for event in events:
+        color = STATUS_COLORS.get(event.route, '#eeeeee')
+        units = 0
+        statuscolor = "#3ea254"
+        jobs = []
+        
+        for i in event.jobs.all():
+            orderunits = i.order.units.all()
+            units +=len(orderunits)
+            
+            if i.status != "delivered":
+                statuscolor = "#d3222a"
+            jobs.append([i.title,i.status, i.order.po_number])
+        group=0
+        if len(event.jobs.all())>1:
+            group = 1
+            
+        events_data.append({
+            'id': event.id, 
+            'jobs': jobs,  
+            'units':units,
+            'title': event.title,
+            'main_phone': event.main_phone,
+            'address': event.address,
+            'special_instructions': event.special_instructions,
+            'statuscolor': statuscolor,
+            'start': event.start_time.isoformat(),
+            'end': event.end_time.isoformat(),
+            'color': color,
+            'group':group
+        })
+
+    return JsonResponse(events_data, safe=False)
+
+
+
 def delete_technician_event(request, event_id):
     event = get_object_or_404(TechnicianEvent, id=event_id)
     print(event)
@@ -330,6 +414,23 @@ def delete_technician_event(request, event_id):
 
     return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
 
+def delete_sales_event(request, event_id):
+    event = get_object_or_404(SalesEvent, id=event_id)
+    print(event)
+    if request.method == "POST":
+        event.delete()
+        return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
+
+    return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
+
+def delete_delivery_event(request, event_id):
+    event = get_object_or_404(DeliveryEvent, id=event_id)
+    print(event)
+    if request.method == "POST":
+        event.delete()
+        return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
+
+    return redirect(request.META.get('HTTP_REFERER', reverse('index'))) 
 
 
 def update_technician_event(request, event_id):
@@ -342,7 +443,76 @@ def update_technician_event(request, event_id):
             return redirect(reverse('technician_calendar'))
     else:
         form = EditTechnicianEventForm(instance=event)
-    return render(request, 'calendar/technician_calendar.html', {'form': form, 'event_id': event_id, "a":a,"event":event})
+    return render(request, 'calendar/sales_calendar.html', {'form': form, 'event_id': event_id, "a":a,"event":event})
+
+def update_sales_event(request, event_id):
+    a=1
+    event = get_object_or_404(SalesEvent, id=event_id)
+    if request.method == 'POST':
+        form = EditSalesEventForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('sales_calendar'))
+    else:
+        form = EditSalesEventForm(instance=event)
+    return render(request, 'calendar/sales_calendar.html', {'form': form, 'event_id': event_id, "a":a,"event":event})
+
+def update_delivery_event(request, event_id):
+    a=1
+    event = get_object_or_404(DeliveryEvent, id=event_id)
+    
+    unscheduled = DeliveryEvent.objects.filter(Q(start_time__isnull=True) | Q(end_time__isnull=True))
+    alljobs = dict()
+    for event in unscheduled:
+        alljobs[event.id] = list(event.jobs.all())
+    for job in alljobs:
+        print(job)
+        
+    if request.method == 'POST':
+        form = EditDeliveryEventForm(request.POST, instance=event)
+        jobforms = []
+        for job in event.jobs.all():
+            job_form = EditJobForm(request.POST, instance=job)
+            jobforms.append([job.order.po_number, job_form])
+        jobs_valid = all(job_form.is_valid() for _, job_form in jobforms)
+        
+        if form.is_valid() and jobs_valid:
+            form.save()
+            for _, job_form in jobforms:
+                job_form.save()
+            return redirect(reverse('delivery_calendar'))
+    else:
+        form = EditDeliveryEventForm(instance=event)
+        jobforms = []
+        for job in event.jobs.all():
+            job_form = EditJobForm(instance=job)
+            jobforms.append([job.order.po_number, job_form])
+    
+    return render(request, 'calendar/delivery_calendar.html', {'form': form, 'event_id': event_id, "event": event, "jobforms": jobforms,"a":a,"unscheduled":unscheduled, "alljobs":alljobs})
+
+
+def schedule_delivery_event(request, event_id):
+    a=2
+    event = get_object_or_404(DeliveryEvent, id=event_id)
+    
+    unscheduled = DeliveryEvent.objects.filter(Q(start_time__isnull=True) | Q(end_time__isnull=True))
+    alljobs = dict()
+    for event in unscheduled:
+        alljobs[event.id] = list(event.jobs.all())
+    for job in alljobs:
+        print(job)
+        
+    if request.method == 'POST':
+        form = ScheduleDeliveryEventForm(request.POST, instance=event)
+        
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('delivery_calendar'))
+    else:
+        form = ScheduleDeliveryEventForm(instance=event)
+    
+    return render(request, 'calendar/delivery_calendar.html', {'form': form, 'event_id': event_id, "event": event,"a":a, "unscheduled":unscheduled, "alljobs":alljobs})
+
 
 
 def document_list(request):

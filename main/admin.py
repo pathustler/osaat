@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Customer, CustomerGalleryImage, Timeline, CustomerFile, Order,Unit, Crew, TechnicianEvent, SalesEvent, GroupedJob, DeliveryEvent, Document,GalleryImage
+from .models import Customer, CustomerGalleryImage, Timeline, CustomerFile, Order,Unit, Crew, TechnicianEvent, SalesEvent, Job, DeliveryEvent, Document,GalleryImage
 
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'display_groups')
@@ -33,11 +33,11 @@ class SalesEventAdmin(admin.ModelAdmin):
     search_fields = ('salesperson__name__username', 'order__po_number', 'title', 'address', 'status')
     list_filter = ('status', 'start_time', 'end_time')
 
-@admin.register(GroupedJob)
-class GroupedJobAdmin(admin.ModelAdmin):
-    list_display = ('order', 'title', 'done')
+@admin.register(Job)
+class Job(admin.ModelAdmin):
+    list_display = ('order', 'title', 'status')
     search_fields = ('order__po_number', 'title')
-    list_filter = ('done',)
+    list_filter = ('status',)
 
 @admin.register(DeliveryEvent)
 class DeliveryEventAdmin(admin.ModelAdmin):

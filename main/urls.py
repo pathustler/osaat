@@ -29,7 +29,15 @@ urlpatterns = [
     path('calendar/technician_calendar/update-event/<int:event_id>/', views.update_technician_event, name='update_technician_event'),
     
     path('calendar/sales_calendar', views.sales_calendar, name='sales_calendar'),
+    path('api/sales_events/', views.get_sales_events, name='get_sales_events'),
+    path('calendar/sales_calendar/delete_event/<int:event_id>/', views.delete_sales_event, name='delete_sales_event'),
+    path('calendar/sales_calendar/update-event/<int:event_id>/', views.update_sales_event, name='update_sales_event'),
+    
     path('calendar/delivery_calendar', views.delivery_calendar, name='delivery_calendar'),
+    path('api/delivery_events/', views.get_delivery_events, name='get_delivery_events'),
+    path('calendar/delivery_calendar/delete_event/<int:event_id>/', views.delete_delivery_event, name='delete_delivery_event'),
+    path('calendar/delivery_calendar/update-event/<int:event_id>/', views.update_delivery_event, name='update_delivery_event'),
+    path('calendar/delivery_calendar/schedule-event/<int:event_id>/', views.schedule_delivery_event, name='schedule_delivery_event'),
     
     #STORAGE
     path('storage/documents/', views.document_list, name='document_list'),

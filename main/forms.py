@@ -1,7 +1,7 @@
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Timeline, Unit, Order, TechnicianEvent
+from .models import Timeline, Unit, Order, TechnicianEvent, SalesEvent, DeliveryEvent, Job
 
 class TimelineForm(forms.ModelForm):
     class Meta:
@@ -81,10 +81,66 @@ class EditTechnicianEventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EditTechnicianEventForm, self).__init__(*args, **kwargs)
         
-        self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
-        self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
+        self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
         self.fields['crew'].widget.attrs.update({'class':"border-2 border-gray-300 text-gray-600 rounded-md h-8 px-2 "})
         self.fields['address'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
         self.fields['main_phone'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
         self.fields['appointment_status'].widget.attrs.update({'class':" border-2 text-gray-600 border-gray-300 rounded-md h-8 px-2"})
         self.fields['appointment_notes'].widget.attrs.update({'class':" w-full rounded-md border-2 h-48 border-gray-300 p-2","placeholder":"Add Appointment Notes"})
+        
+        
+class EditSalesEventForm(forms.ModelForm):
+    class Meta:
+        model = SalesEvent
+        fields = ['start_time', 'end_time', 'address', 'main_phone', 'status', 'appointment_notes']
+        
+    def __init__(self, *args, **kwargs):
+        super(EditSalesEventForm, self).__init__(*args, **kwargs)
+        
+        self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['address'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
+        self.fields['main_phone'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
+        self.fields['status'].widget.attrs.update({'class':"border-2 text-gray-600 border-gray-300 rounded-md h-8 px-2"})
+        self.fields['appointment_notes'].widget.attrs.update({'class':"w-full rounded-md border-2 h-48 border-gray-300 p-2", "placeholder":"Add Appointment Notes"})
+        
+class EditDeliveryEventForm(forms.ModelForm):
+    class Meta:
+        model = DeliveryEvent
+        fields = ['start_time', 'end_time', 'address', 'main_phone', 'route', 'special_instructions']
+        
+    def __init__(self, *args, **kwargs):
+        super(EditDeliveryEventForm, self).__init__(*args, **kwargs)
+        
+        self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['address'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
+        self.fields['main_phone'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
+        self.fields['route'].widget.attrs.update({'class':"border-2 text-gray-600 border-gray-300 rounded-md h-8 px-2"})
+        self.fields['special_instructions'].widget.attrs.update({'class':"w-full rounded-md border-2 h-24 border-gray-300 p-2", "placeholder":"Add Special Instructions"})
+        
+        
+class EditJobForm(forms.ModelForm):
+    class Meta:
+        model = Job
+        fields = ['title', 'status']
+        
+    def __init__(self, *args, **kwargs):
+        super(EditJobForm, self).__init__(*args, **kwargs)
+        
+       
+        self.fields['title'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
+        self.fields['status'].widget.attrs.update({'class':"border-2 text-gray-600 border-gray-300 rounded-md h-8 px-2"})
+        
+        
+class ScheduleDeliveryEventForm(forms.ModelForm):
+    class Meta:
+        model = DeliveryEvent
+        fields = ['start_time', 'end_time']
+        
+    def __init__(self, *args, **kwargs):
+        super(ScheduleDeliveryEventForm, self).__init__(*args, **kwargs)
+        
+        self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
