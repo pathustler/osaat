@@ -144,3 +144,68 @@ class ScheduleDeliveryEventForm(forms.ModelForm):
         
         self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
         self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+
+
+
+
+class TechnicianEventForm(forms.ModelForm):
+    class Meta:
+        model = TechnicianEvent
+        fields = [
+            'technician', 'order', 'visit_type',
+            'start_time', 'end_time', 'address', 'main_phone',
+            'appointment_notes'
+        ]
+        
+    def __init__(self, *args, **kwargs):
+        super(TechnicianEventForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'border-2 border-gray-300 px-2 rounded-md h-8 items-center'})
+        self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['appointment_notes'].widget.attrs.update({'class':"w-full rounded-md border-2 h-36 border-gray-300 p-2", "placeholder":"Add Appointment Notes"})
+            
+class SalesEventForm(forms.ModelForm):
+    class Meta:
+        model = SalesEvent
+        fields = [
+            'salesperson', 'order', 'title', 'main_phone', 'address',
+            'appointment_notes', 'start_time', 'end_time'
+        ]
+        
+    def __init__(self, *args, **kwargs):
+        super(SalesEventForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'border-2 border-gray-300 px-2 rounded-md h-8'})
+        self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['appointment_notes'].widget.attrs.update({'class':"w-full rounded-md border-2 h-36 border-gray-300 p-2", "placeholder":"Add Appointment Notes"})
+
+
+class DeliveryEventForm(forms.ModelForm):
+    class Meta:
+        model = DeliveryEvent
+        fields = [
+            'title', 'main_phone', 'address', 'special_instructions', 
+            'start_time', 'end_time', 
+        ]
+        
+    def __init__(self, *args, **kwargs):
+        super(DeliveryEventForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'border-2 border-gray-300 px-2 rounded-md h-8'})
+        self.fields['title'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 w-full"})
+        self.fields['address'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 w-full"})
+        self.fields['main_phone'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 w-full"})
+        self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['special_instructions'].widget.attrs.update({'class':"w-full rounded-md border-2 h-36 border-gray-300 p-2", "placeholder":"Add Appointment Notes"})
+        
+class JobForm(forms.ModelForm):
+    class Meta:
+        model = Job
+        fields = ['order', 'title']
+    def __init__(self, *args, **kwargs):
+        super(JobForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'border-2 border-gray-300 px-2 rounded-md h-8'})

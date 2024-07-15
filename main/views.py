@@ -4,7 +4,7 @@ from .forms import CustomAuthenticationForm,EditTechnicianEventForm
 from django.contrib.auth.decorators import login_required
 from .models import Customer ,Timeline, Order, Unit, TechnicianEvent,Document, GalleryImage, SalesEvent, DeliveryEvent
 from django.shortcuts import render, get_object_or_404,redirect
-from .forms import TimelineForm, OrderForm, UnitForm, EditSalesEventForm, EditDeliveryEventForm,EditJobForm, ScheduleDeliveryEventForm
+from .forms import *
 from django.urls import reverse
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -12,6 +12,7 @@ from django.db.models import Q
 import boto3
 from django.conf import settings
 from django.core.files.storage import default_storage
+
 
 # Create your views here.
 
@@ -308,6 +309,8 @@ def get_technician_events(request):
         opo = event.order.po_number
         cust = event.order.customer.unique_code
         cnum = event.crew[-1]
+        if event.crew=="unset":
+            cnum= "Unset"
 
         events_data.append({
             'id': event.id,
@@ -370,7 +373,7 @@ def get_delivery_events(request):
     events_data = []
 
     for event in events:
-        color = STATUS_COLORS.get(event.route, '#eeeeee')
+        color = STATUS_COLORS.get(event.route, '#888888')
         units = 0
         statuscolor = "#3ea254"
         jobs = []
@@ -542,3 +545,53 @@ def file_browser(request):
         'folders': folders,
     })
 
+
+
+@login_required
+def schedule(request, unique_code):
+    customer = get_object_or_404(Customer, unique_code=unique_code)
+    
+    if request.method == 'POST':
+        techform = TechnicianEventForm(request.POST)
+        salesform = SalesEventForm(request.POST)
+        deliveryform = DeliveryEventForm(request.POST)
+        job_forms_data = request.POST.getlist('jobs')
+        
+        job_order_ids = request.POST.getlist('job_order')
+        job_titles = request.POST.getlist('job_title')
+
+        if techform.is_valid():
+            tech_event = techform.save(commit=False)
+            tech_event.save()
+            return redirect(reverse('technician_calendar'))
+
+        elif salesform.is_valid():
+            sales_event = salesform.save(commit=False)
+            sales_event.save()
+            return redirect(reverse('sales_calendar'))
+
+        elif deliveryform.is_valid():
+            delivery_event = deliveryform.save(commit=False)
+            delivery_event.save()
+
+            for order_id, title in zip(job_order_ids, job_titles):
+                if order_id and title:
+                    job = Job.objects.create(order_id=order_id, title=title)
+                    delivery_event.jobs.add(job)
+
+            delivery_event.save()
+            return redirect(reverse('delivery_calendar'))
+    else:
+        techform = TechnicianEventForm()
+        salesform = SalesEventForm()
+        deliveryform = DeliveryEventForm()
+    for i in Order.objects.filter(customer__unique_code=unique_code):
+        print(i.customer.unique_code)
+    
+    return render(request, 'calendar/schedule.html', {
+        "customer": customer,
+        "techform": techform,
+        "salesform": salesform,
+        "deliveryform": deliveryform,
+        "orders": Order.objects.filter(customer__unique_code=unique_code)
+    })
