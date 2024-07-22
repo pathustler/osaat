@@ -6,20 +6,267 @@
 {% endblock %}
 
 {% block content %}
+
+
+<div id="schedule-popup" class="hidden absolute bg-black bg-opacity-50 z-50 h-screen w-full">
+
+
+<div class=" bottom-0 right-0 max-w-4xl mx-auto bg-white my-12 rounded-2xl shadow-lg  p-8 overflow-y-auto" >
+    <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center gap-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#aaaaaa" class="h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+            </svg>
+                  
+              <h1 class="text-2xl font-bold">Schedule Visit</h1>
+        </div>
+        
+
+    </div>
+    <div class="border-b mb-4">
+        <nav class="formnav flex space-x-4">
+            <a href="#tech" class="py-2 px-4 w-full text-center text-blue-500 border-b-2 border-blue-500" onclick="switchFormTab(event, 'tech')">TECHNICIAN</a>
+            <a href="#sales" class="py-2 px-4 w-full text-center text-gray-500" onclick="switchFormTab(event, 'sales')">SALES</a>
+            <a href="#delivery" class="py-2 px-4 w-full text-center text-gray-500" onclick="switchFormTab(event, 'delivery')">DELIVERY</a>
+        </nav>
+    </div>
+    <div id="tech" class="form-tab-content flex flex-col justify-between p-4 pt-0">
+        <form method="post" class="techform h-full flex flex-col justify-between" action="{% url 'schedule' customer.unique_code %}">
+            {% csrf_token %}
+            <div>
+        <div class="flex gap-6 my-4">
+            <div>
+            <p class="text-gray-800 text-sm my-2 font-semibold">START TIME</p>
+            {{ techform.start_time.errors }}
+            {{ techform.start_time }}
+            </div>
+        
+            <div>
+                <p class="text-gray-800 text-sm my-2 font-semibold">END TIME</p>
+                {{ techform.end_time.errors }}
+                {{ techform.end_time }}
+            </div>
+        
+        </div>
+        <div class="flex gap-6 my-4">
+        <div>
+            <p class="text-gray-800 text-sm my-2 font-semibold">ADDRESS</p>
+            {{ techform.address.errors }}
+            {{ techform.address }}
+        </div>
+        
+        <div >
+            <p class="text-gray-800 text-sm my-2 font-semibold">MAIN PHONE #</p>
+            {{ techform.main_phone.errors }}
+            {{ techform.main_phone }}
+        </div>
+        </div>
+        <div class="flex justify-between my-4 gap-6">
+            <div>
+                <p class="text-gray-800 text-sm my-2 font-semibold">TECHNICIAN</p>
+                {{ techform.technician.errors }}
+                {{ techform.technician }}
+            </div>
+        
+            <div >
+                <p class="text-gray-800 text-sm my-2 font-semibold">ORDER</p>
+                {{ techform.order.errors }}
+                {{ techform.order }}
+            </div>
+
+            <div >
+                <p class="text-gray-800 text-sm my-2 font-semibold">VISIT TYPE</p>
+                {{ techform.visit_type.errors }}
+                {{ techform.visit_type }}
+            </div>
+        </div>
+        <div class="mt-4">
+            <p class="text-gray-800 text-sm my-2 font-semibold">APPOINTMENT NOTES</p>
+            {{ techform.appointment_notes.errors }}
+            {{ techform.appointment_notes }}
+        </div>
+            </div>
+            
+            <div class="mt-6 flex justify-between">
+                <button id="cancel-button" class=" bg-gray-200 hover:bg-gray-300 text-black px-4 py-2 rounded-lg w-24 text-center">Cancel</button>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 w-24 text-center hover:bg-blue-600 rounded-lg">Save</button>
+           
+            </div>
+        </form>
+
+    </div>
+    <div id="sales" class="form-tab-content hidden justify-between p-4 pt-0">
+        <form method="post" class="techform h-full flex flex-col justify-between" action="{% url 'schedule' customer.unique_code %}">
+            {% csrf_token %}
+            <div>
+                <div class="flex justify-between my-4 gap-6">
+                    <div >
+                        <p class="text-gray-800 text-sm my-2 font-semibold">TITLE</p>
+                        {{ salesform.title.errors }}
+                        {{ salesform.title }}
+                    </div>
+                    <div>
+                        <p class="text-gray-800 text-sm my-2 font-semibold">SALESPERSON</p>
+                        {{ salesform.salesperson.errors }}
+                        {{ salesform.salesperson }}
+                    </div>
+                
+                    <div >
+                        <p class="text-gray-800 text-sm my-2 font-semibold">ORDER</p>
+                        {{ salesform.order.errors }}
+                        {{ salesform.order }}
+                    </div>            
+                </div>
+        <div class="flex gap-6 my-4">
+            <div>
+            <p class="text-gray-800 text-sm my-2 font-semibold">START TIME</p>
+            {{ salesform.start_time.errors }}
+            {{ salesform.start_time }}
+            </div>
+        
+            <div>
+                <p class="text-gray-800 text-sm my-2 font-semibold">END TIME</p>
+                {{ salesform.end_time.errors }}
+                {{ salesform.end_time }}
+            </div>
+        
+        </div>
+        <div class="flex gap-6 my-4">
+        <div>
+            <p class="text-gray-800 text-sm my-2 font-semibold">ADDRESS</p>
+            {{ salesform.address.errors }}
+            {{ salesform.address }}
+        </div>
+        
+        <div >
+            <p class="text-gray-800 text-sm my-2 font-semibold">MAIN PHONE #</p>
+            {{ salesform.main_phone.errors }}
+            {{ salesform.main_phone }}
+        </div>
+        </div>
+        
+        <div class="mt-4">
+            <p class="text-gray-800 text-sm my-2 font-semibold">APPOINTMENT NOTES</p>
+            {{ salesform.appointment_notes.errors }}
+            {{ salesform.appointment_notes }}
+        </div>
+            </div>
+            
+            <div class="mt-6 flex justify-between">
+                <button id="cancel-button" class=" bg-gray-200 hover:bg-gray-300 text-black px-4 py-2 rounded-lg w-24 text-center">Cancel</button>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 w-24 text-center hover:bg-blue-600 rounded-lg">Save</button>
+           
+            </div>
+        </form>
+    </div>
+    <div id="delivery" class="form-tab-content hidden justify-between p-4 pt-0">
+        <form method="post" class="techform h-full flex flex-col justify-between" action="{% url 'schedule' customer.unique_code %}">
+            {% csrf_token %}
+
+            <div class="flex justify-between gap-8">
+                <div class="w-full">
+                    <div>
+                        <div class="flex justify-between my-4 gap-8">
+                            <div class="w-full">
+                                <p class="text-gray-800 text-sm my-2 font-semibold">TITLE</p>
+                                {{ deliveryform.title.errors }}
+                                {{ deliveryform.title }}
+                            </div>  
+                        </div>
+                    </div>
+
+                
+                    <div class="flex gap-6 my-4 w-full">
+                        <div class="w-full">
+                            <p class="text-gray-800 text-sm my-2 font-semibold">ADDRESS</p>
+                            {{ deliveryform.address.errors }}
+                            {{ deliveryform.address }}
+                        </div>
+                    
+                    </div>
+                    <div class="flex gap-6 my-2 w-full">
+                        
+                        
+                        <div class="w-full">
+                            <p class="text-gray-800 text-sm my-2 font-semibold">MAIN PHONE #</p>
+                            {{ deliveryform.main_phone.errors }}
+                            {{ deliveryform.main_phone }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full">
+                    <div class="my-6">
+                        <p class="text-gray-800 text-sm my-2 font-semibold">JOBS</p>
+                        <div id="jobs-container" class="flex flex-col gap-4 h-36 overflow-y-auto">
+                            <div class="job-item flex flex-row gap-4 justify-between group">
+                                <svg xmlns="http://www.w3.org/2000/svg" stroke="#b91c1c" stroke-width="2" class="stroke-red-700 hover:stroke-red-800 cursor-pointer h-8 w-8 opacity-0 group-hover:opacity-100 remove-job-icon" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                                <select name="job_order" class="border-2 border-gray-300 px-2 w-full rounded-md h-8">
+                                    {% for order in orders %}
+                                        <option value="{{ order.id }}">{{ order }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" name="job_title" placeholder="Job Title" class='border-2 border-gray-300 px-2 w-full rounded-md h-8'>
+                            </div>
+                        </div>
+                        <div id="add-job-button" class="flex items-center justify-center cursor-pointer bg-gray-50 rounded-lg py-3 hover:bg-gray-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+               
+       
+        
+            <div>
+                <p class="text-gray-800 text-sm my-2 font-semibold">SPECIAL INSTRUCTIONS</p>
+                {{ deliveryform.special_instructions.errors }}
+                {{ deliveryform.special_instructions }}
+            </div>
+            
+            <div class="mt-6 flex justify-between">
+                <button id="cancel-button" class=" bg-gray-200 hover:bg-gray-300 text-black px-4 py-2 rounded-lg w-24 text-center">Cancel</button>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 w-24 text-center hover:bg-blue-600 rounded-lg">Save</button>
+           
+            </div>
+        </form>
+    </div>
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="max-w-4xl mx-auto bg-white my-12 rounded-2xl shadow-lg w-full p-8 overflow-y-auto" style="height: 88vh;">
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl font-bold">Sun Control Retractable Shades</h1>
         <span id="unicode" class="text-gray-500">{{ customer.unique_code }}</span>
     </div>
     <div class="border-b mb-4">
-        <nav class="flex space-x-4">
+        <nav class="custnav flex space-x-4">
             <a href="#info" class="py-2 px-4 text-blue-500 border-b-2 border-blue-500" onclick="switchTab(event, 'info')">INFO</a>
             <a href="#gallery" class="py-2 px-4 text-gray-500" onclick="switchTab(event, 'gallery')">GALLERY</a>
             <a href="#timeline" class="py-2 px-4 text-gray-500" onclick="switchTab(event, 'timeline')">TIMELINE</a>
             <a href="#orders" class="py-2 px-4 text-gray-500" onclick="switchTab(event, 'orders')">ORDERS</a>
         </nav>
     </div>
-    <div id="info" class="tab-content flex flex-col justify-between p-4">
+    <div id="info" class="cust-tab-content flex flex-col justify-between p-4">
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <h2 class="text-lg font-bold">Primary Contact</h2>
@@ -41,10 +288,12 @@
             </div>
         </div>
         <div>
-           <a href="{% url 'schedule' customer.unique_code %}"><button class="mt-4 py-2 px-4 bg-blue-500 text-white rounded-lg">SCHEDULE A VISIT</button></a> 
+           <!-- <a href="{% url 'schedule' customer.unique_code %}"> -->
+            <button id="schedule-button" class="mt-4 py-2 px-4 bg-blue-500 text-white rounded-lg">SCHEDULE A VISIT</button>
+            <!-- </a>  -->
         </div>
     </div>
-    <div id="gallery" class="tab-content hidden justify-between p-4">
+    <div id="gallery" class="cust-tab-content hidden justify-between p-4">
         <div class="w-72 h-8 flex flex-row items-center justify-center gap-3 relative right-0 float-right">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#888" class="w-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -66,7 +315,7 @@
             {% endfor %}
         </div>
     </div>
-    <div id="timeline" class="tab-content hidden justify-between p-4">
+    <div id="timeline" class="cust-tab-content hidden justify-between p-4">
         <div class="w-full flex items-center justify-end gap-6">
             
             <button class="h-8 w-fit px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md" id="newPostBtn">NEW POST</button>
@@ -115,7 +364,7 @@
             {% endfor %}
         </div>
     </div>
-    <div id="orders" class="tab-content hidden justify-between p-4">
+    <div id="orders" class="cust-tab-content hidden justify-between p-4">
         <div class="w-72 text-right h-8 flex flex-row items-center justify-end gap-3 relative right-0 float-right">
             <a href="{% url 'order' unique_code=customer.unique_code %}" class="h-8 w-fit px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md flex items-center justify-center">NEW ORDER</a>
         </div>
@@ -155,7 +404,7 @@
     </div>
 </div>
 
-<div id="timeline" class="tab-content hidden justify-between p-4">
+<div id="timeline" class="cust-tab-content hidden justify-between p-4">
     <div class="w-full flex items-center justify-end gap-6">
         
         <button id="newPostBtn" class="h-8 w-fit px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md">NEW POST</button>
@@ -201,11 +450,11 @@
     function switchTab(event, tabId) {
         event.preventDefault();
 
-        document.querySelectorAll('.tab-content').forEach(content => {
+        document.querySelectorAll('.cust-tab-content').forEach(content => {
             content.classList.add('hidden');
         });
 
-        document.querySelectorAll('nav a').forEach(tab => {
+        document.querySelectorAll('.custnav a').forEach(tab => {
             tab.classList.remove('border-blue-500', 'text-blue-500', 'border-b-2');
             tab.classList.add('text-gray-500');
         });
@@ -224,18 +473,18 @@
     window.onload = function() {
         const savedTab = localStorage.getItem('selectedTab') || 'info'; // Default to 'info' tab if none saved
 
-        document.querySelectorAll('.tab-content').forEach(content => {
+        document.querySelectorAll('.cust-tab-content').forEach(content => {
             content.classList.add('hidden');
         });
 
-        document.querySelectorAll('nav a').forEach(tab => {
+        document.querySelectorAll('.custnav a').forEach(tab => {
             tab.classList.remove('border-blue-500', 'text-blue-500', 'border-b-2');
             tab.classList.add('text-gray-500');
         });
 
         document.getElementById(savedTab).classList.remove('hidden');
-        document.querySelector(`nav a[href="#${savedTab}"]`).classList.add('border-blue-500', 'text-blue-500', 'border-b-2');
-        document.querySelector(`nav a[href="#${savedTab}"]`).classList.remove('text-gray-500');
+        document.querySelector(`.custnav a[href="#${savedTab}"]`).classList.add('border-blue-500', 'text-blue-500', 'border-b-2');
+        document.querySelector(`.custnav a[href="#${savedTab}"]`).classList.remove('text-gray-500');
     }
 
     document.getElementById('newPostBtn').onclick = function() {
@@ -328,6 +577,18 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     
 <script>
+    document.querySelector("#schedule-button").addEventListener("click", ()=>{
+        document.querySelector("#schedule-popup").classList.add("active")
+        document.querySelector("#schedule-popup").classList.remove("hidden")
+    })
+    const cancelbuttons = document.querySelectorAll('#cancel-button');
+    cancelbuttons.forEach(button => {
+        button.addEventListener("click", ()=>{
+            document.querySelector("#schedule-popup").classList.add("hidden")
+            document.querySelector("#schedule-popup").classList.remove("active")
+        })
+    })
+    
    $(document).ready(function () {
     function loadFolderContents(folderPath, targetElement, isFolderClick = false) {
         $.ajax({
@@ -402,4 +663,141 @@
 
 
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr('.datetimepicker', {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+            });
+        });
+    </script>
+
+<script>
+
+
+function switchFormTab(event, tabId) {
+        event.preventDefault();
+        
+
+        document.querySelectorAll('.form-tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+
+        document.querySelectorAll('.formnav a').forEach(tab => {
+            tab.classList.remove('border-blue-500', 'text-blue-500', 'border-b-2');
+            tab.classList.add('text-gray-500');
+        });
+
+        document.getElementById(tabId).classList.remove('hidden');
+
+        // Add active class to the selected tab
+        event.currentTarget.classList.add('border-blue-500', 'text-blue-500', 'border-b-2');
+        event.currentTarget.classList.remove('text-gray-500');
+
+        // Save the selected tab in local storage
+        localStorage.setItem('selectedForm', tabId);
+
+        clearOtherForms(tabId);
+    }
+    function clearOtherForms(activeTab) {
+        const formsToClear = {
+            'tech': ['sales', 'delivery'],
+            'sales': ['tech', 'delivery'],
+            'delivery': ['tech', 'sales']
+        };
+
+        formsToClear[activeTab].forEach(tab => {
+            document.getElementById(tab).querySelector('form').reset();
+        });
+    }
+
+    window.onload = function() {
+        const savedFormTab = localStorage.getItem('selectedForm') || 'tech'; // Default to 'info' tab if none saved
+
+        document.querySelectorAll('.form-tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+
+        document.querySelectorAll('.formnav a').forEach(tab => {
+            tab.classList.remove('border-blue-500', 'text-blue-500', 'border-b-2');
+            tab.classList.add('text-gray-500');
+        });
+
+        document.getElementById(savedFormTab).classList.remove('hidden');
+        document.querySelector(`.formnav a[href="#${savedFormTab}"]`).classList.add('border-blue-500', 'text-blue-500', 'border-b-2');
+        document.querySelector(`.formnav a[href="#${savedFormTab}"]`).classList.remove('text-gray-500');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const jobsContainer = document.getElementById('jobs-container');
+        const addJobButton = document.getElementById('add-job-button');
+
+        addJobButton.addEventListener('click', function() {
+            addJobField();
+        });
+
+        jobsContainer.addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('remove-job-icon')) {
+                removeJobField(event.target.parentNode);
+            }
+        });
+
+        function addJobField() {
+            const newForm = jobsContainer.querySelector('.job-item').cloneNode(true);
+            
+            newForm.querySelectorAll('input').forEach(input => {
+                input.value = '';
+            });
+            jobsContainer.appendChild(newForm);
+        }
+
+        function removeJobField(jobItem) {
+            const jobItems = jobsContainer.querySelectorAll('.job-item');
+            const numberOfJobItems = jobItems.length;
+            if (numberOfJobItems!=1){
+                jobItem.remove();
+            } else {
+                alert("There must be Minimum 1 Job Selected for Delivery")
+            }
+            
+        }
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {% endblock %}

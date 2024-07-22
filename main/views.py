@@ -92,6 +92,42 @@ def customer(request, unique_code):
         grouped_images[upload_date].append(image)
         
     grouped_images = dict(sorted(grouped_images.items(), reverse=True))
+    
+    
+    if request.method == 'POST':
+        techform = TechnicianEventForm(request.POST)
+        salesform = SalesEventForm(request.POST)
+        deliveryform = DeliveryEventForm(request.POST)
+        job_forms_data = request.POST.getlist('jobs')
+        
+        job_order_ids = request.POST.getlist('job_order')
+        job_titles = request.POST.getlist('job_title')
+
+        if techform.is_valid():
+            tech_event = techform.save(commit=False)
+            tech_event.save()
+            return redirect(reverse('technician_calendar'))
+
+        elif salesform.is_valid():
+            sales_event = salesform.save(commit=False)
+            sales_event.save()
+            return redirect(reverse('sales_calendar'))
+
+        elif deliveryform.is_valid():
+            delivery_event = deliveryform.save(commit=False)
+            delivery_event.save()
+
+            for order_id, title in zip(job_order_ids, job_titles):
+                if order_id and title:
+                    job = Job.objects.create(order_id=order_id, title=title)
+                    delivery_event.jobs.add(job)
+
+            delivery_event.save()
+            return redirect(reverse('delivery_calendar'))
+    else:
+        techform = TechnicianEventForm()
+        salesform = SalesEventForm()
+        deliveryform = DeliveryEventForm()
 
     return render(request, 'main/customer.html', {
         "customer": customer, 
@@ -105,6 +141,11 @@ def customer(request, unique_code):
         'root_folder': root_folder,
         'grouped_images': grouped_images,
         'signed_urls': signed_urls,  # Pass signed URLs to the template
+        "customer": customer,
+        "techform": techform,
+        "salesform": salesform,
+        "deliveryform": deliveryform,
+        "orders": Order.objects.filter(customer__unique_code=unique_code)
     })
     
     
