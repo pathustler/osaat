@@ -1,0 +1,10 @@
+.custom-checkbox {
+    background-color: white;
+    color: gray;
+}
+
+.custom-checkbox.checked {
+    background-color: green;
+    color: white;
+    border-color: green;
+}

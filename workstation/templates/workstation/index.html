@@ -1,0 +1,89 @@
+{% extends 'workstation/layout.html' %}
+{% load static %}
+
+{% block content %}
+        <div class="flex flex-row justify-between items-center absolute right-8 bottom-8">
+
+                        
+            <div>
+                <img class="w-36" src="{% static 'images/suncontrol.png' %}" alt="Sun Control Logo">
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col items-center justify-center p-8">
+            <div class="w-full flex justify-end items-center mb-6" style="gap: 10vh;">
+                <a href="https://www.workforcenow.adp.com">
+                    <div class="bg-red-400 hover:bg-red-500 p-2 w-16 h-16 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+                        <img src="https://logos.logofury.com/logo_src/b19f7887d51ddd119379f5d9225f7e84.png" alt="ADP" class=" h-4">
+                    </div>
+                </a>
+            </div>
+            <h1 class="text-gray-600 font-semibold mb-6">SELECT WORKSTATION</h1>
+            <div class="px-auto my-auto">
+                <div class="w-full flex flex-wrap justify-center text-center px-auto " style="gap: 5vh;">
+                    <a href="{% url 'box_cut' po_number=839993 %}">
+                        <div class="bg-purple-800 hover:bg-purple-900 p-2 w-24 h-24 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+                            <p class="text-xl text-white font-bold text-center">BOX CUT</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'tube_cut' %}">
+                        <div class="bg-blue-800 hover:bg-blue-900 p-2 w-24 h-24 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+                            <p class="text-xl text-white font-bold text-center">TUBE CUT</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'track_prep' %}">
+                        <div class="bg-green-800 hover:bg-green-900 p-2 w-24 h-24 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+                            <p class="text-xl text-white font-bold text-center">TRACK PREP</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'hardware' %}">
+                        <div class="bg-yellow-500 hover:bg-yellow-600 p-2 w-24 h-24 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+                            <p class="text-sm text-white font-bold text-center">HARDWARE</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'powder_coat' %}">
+                        <div class="bg-green-700 hover:bg-green-800 p-2 w-24 h-24 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+                            <p class="text-l text-white font-bold text-center">POWDER COAT</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'fabric' %}">
+                        <div class="bg-yellow-800 hover:bg-yellow-900 p-2 w-24 h-24 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+                            <p class="text-xl text-white font-bold text-center">FABRIC</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'assembly' %}">
+                        <div class="bg-blue-400 hover:bg-blue-500 p-2 w-24 h-24 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+                            <p class="text-sm text-white font-bold text-center">ASSEMBLY</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'shipping' %}">
+                        <div class="bg-purple-600 hover:bg-purple-700 p-2 w-24 h-24 rounded-full flex items-center justify-center shadow-lg cursor-pointer">
+                            <p class="text-l text-white font-bold text-center">SHIPPING</p>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+            
+        </div>
+{% endblock %}
+{% block script %}
+<script> 
+    var date = new Date(); 
+    var dd = date.getDate(); 
+    var mm = date.toLocaleString('default', { month: 'long' });
+    var yyyy = date.getFullYear(); 
+    var newDate =  mm + " "+dd+ "th, " +yyyy; 
+    var p = document.getElementById("date"); 
+    p.innerHTML = newDate; 
+
+
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+
+    let currentTime = hours + ':' + minutes;
+    var pt = document.getElementById("time"); 
+    pt.innerHTML = currentTime; 
+
+</script> 
+{% endblock %}

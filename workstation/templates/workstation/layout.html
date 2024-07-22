@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+    
+    {% endblock %}
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+</head>
+<body class="bg-gray-100">
+    <div class="flex flex-col">
+       <div class="bg-gray-200 w-full flex flex-col justify-between"> 
+        <div class=" flex flex-col justify-center  ">
+            <div class="text-left flex justify-between p-3 bg-black bg-opacity-100">
+                <div class="flex gap-2 items-center">
+                    <img class="w-4 h-4 rounded-full" src="https://as2.ftcdn.net/v2/jpg/04/10/43/77/1000_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg">
+                    <h2 class="text-sm font-semibold text-gray-200">{{ user.username }}</h2>
+                </div>
+               
+                <div class="flex gap-4">
+                    <p id="date" class="text-sm text-gray-400">April 15th, 2024</p>
+                    <p id="time" class="text-sm text-gray-400"></p>
+                </div>
+               
+            </div>
+            <div class="w-full flex flex-row justify-between items-center p-6"> 
+                <a href="{% url 'workstation_dashboard' %}">
+                    <div class="text-center w-full flex items-center justify-center">
+                        <img src="{% static 'images/logoosaat.png' %}" class="h-12" alt="OSAAT Logo">
+                    </div>
+                </a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button style="background-color: #999; color: black; padding: 6px 16px; border-radius: 4px;" type="submit">Logout</button>
+                </form>
+            </div>
+            
+            
+            
+            </div>
+
+        
+        </div>
+
+
+        {% block content %}{% endblock %}
+
+
+    </div>
+</body>
+<script> 
+    var date = new Date(); 
+    var dd = date.getDate(); 
+    var mm = date.toLocaleString('default', { month: 'long' });
+    var yyyy = date.getFullYear(); 
+    var newDate =  mm + " "+dd+ "th, " +yyyy; 
+    var p = document.getElementById("date"); 
+    p.innerHTML = newDate; 
+
+
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+
+    let currentTime = hours + ':' + minutes;
+    var pt = document.getElementById("time"); 
+    pt.innerHTML = currentTime; 
+
+</script> 
+
+{% block script %}
+
+{% endblock %}
+
+</html>

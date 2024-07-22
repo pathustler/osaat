@@ -78,7 +78,9 @@ class Order(models.Model):
     installation_address_same_as_shipping = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Order {self.po_number} for {self.account_name}"
+        if self.confirmed:
+            return f"Confirmed Order {self.po_number} for {self.account_name}"
+        return f"Unconfirmed Order {self.po_number} for {self.account_name}"
 
 class CustomerFile(models.Model):
     order = models.ForeignKey(Order, related_name='wasabi_files', on_delete=models.CASCADE)

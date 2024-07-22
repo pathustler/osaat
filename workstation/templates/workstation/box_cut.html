@@ -1,0 +1,465 @@
+{% extends 'workstation/layout.html' %}
+{% load static %}
+
+{% block head %}
+<style>
+.completetab{
+    background-color: rgb(22 163 74);
+    width: 6rem;
+    margin-bottom: 0.75rem;
+    text-align: center;
+    font-size: 0.875rem /* 14px */;
+    line-height: 1.25rem /* 20px */;
+    border-width: 2px;
+    border-color: rgb(22 163 74) /* #4b5563 */;
+    color: white;
+    display: inline-block;
+    padding-top: 0.25rem /* 4px */;
+    padding-bottom: 0.25rem /* 4px */;
+    border-radius: 0.5rem /* 8px */;
+    padding-left: 0.5rem /* 8px */;
+    padding-right: 0.5rem /* 8px */;
+    font-weight: 600;
+
+}
+.completetab:hover{
+    background-color: rgb(21 128 61);
+}
+
+.activetab{
+    background-color: rgb(50 50 50) !important;
+    width: 6rem;
+    margin-bottom: 0.75rem;
+    text-align: center;
+    font-size: 0.875rem /* 14px */;
+    line-height: 1.25rem /* 20px */;
+    border-width: 2px;
+    border-color: rgb(20 20 20) /* #4b5563 */!important;
+    color: white!important;
+    display: inline-block;
+    padding-top: 0.25rem /* 4px */;
+    padding-bottom: 0.25rem /* 4px */;
+    border-radius: 0.5rem /* 8px */;
+    padding-left: 0.5rem /* 8px */;
+    padding-right: 0.5rem /* 8px */;
+    font-weight: 600;
+
+}
+.activetab:hover{
+    background-color: rgb(0 0 0)!important;
+}
+
+.activetab{
+    background-color: rgb(22 163 74);
+    width: 6rem;
+    margin-bottom: 0.75rem;
+    text-align: center;
+    font-size: 0.875rem /* 14px */;
+    line-height: 1.25rem /* 20px */;
+    border-width: 2px;
+    border-color: rgb(22 163 74) /* #4b5563 */;
+    color: white;
+    display: inline-block;
+    padding-top: 0.25rem /* 4px */;
+    padding-bottom: 0.25rem /* 4px */;
+    border-radius: 0.5rem /* 8px */;
+    padding-left: 0.5rem /* 8px */;
+    padding-right: 0.5rem /* 8px */;
+    font-weight: 600;
+
+}
+.activetab:hover{
+    background-color: rgb(21 128 61);
+}
+
+.incompletetab {
+    background-color: white;
+    width: 6rem;
+    margin-bottom: 0.75rem;
+    text-align: center;
+    font-size: 0.875rem /* 14px */;
+    line-height: 1.25rem /* 20px */;
+    border-width: 2px;
+    border-color: rgb(75 85 99) /* #4b5563 */;
+    color: rgb(75 85 99);
+    display: inline-block;
+    padding-top: 0.25rem /* 4px */;
+    padding-bottom: 0.25rem /* 4px */;
+    border-radius: 0.5rem /* 8px */;
+    padding-left: 0.5rem /* 8px */;
+    padding-right: 0.5rem /* 8px */;
+    font-weight: 600;
+ 
+}
+.incompletetab:hover{
+    background-color: rgb(75 85 99);
+    color: rgb(255 255 255);
+
+}
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div id="confirm-completed-popup" class="hidden h-screen w-full absolute bg-black bg-opacity-40 z-20 p-4">
+    <div class="h-screen w-full flex justify-center items-center">
+        <div class="bg-white p-12 w-96 rounded-2xl shadow-xl">
+            <div class="flex gap-2 items-center flex-row mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="orange" class="w-6 items-center">
+                    <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+                </svg>
+                  
+                <h2 class="text-xl font-semibold">Confirm Action</h2>
+            </div>
+            
+            <p class="mb-6 text-gray-600">Are you sure you want to confirm and complete the tasks for this order? This action is irreversible.</p>
+            <div class="flex justify-between gap-6">
+                <button id="cancel-button" class="bg-red-600 w-full text-center text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                    Cancel
+                </button>
+                <form action="{% url 'box_cut_complete' order.po_number %}" method="post" class="w-full">
+                    {% csrf_token %}
+                    <button type="submit" id="complete-button" class="bg-green-600 w-full text-center text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50">
+                        Complete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="w-full px-4 mx-auto mt-4 flex flex-col overflow-y-auto justify-between pb-24" style="height: 80vh;">
+    <div class="w-full">
+    
+    <h2 class="text-2xl font-bold text-gray-600">BOX CUT</h2>
+    <p class="text-l font-semibold mb-2 text-gray-800">#{{ order.po_number }}</p>
+    <div class="flex items-center justify-between">
+        <p class="text-l font-semibold mb-6 text-gray-800">{{ order.customer.primary_contact }}</p>
+        <p class="text-l font-semibold mb-6 text-gray-800">{{ order.account_name }}</p>
+    </div>
+    
+    <div class="flex flex-col">
+    
+    <form method="post">
+        {% csrf_token %}
+        {% for unit_number, form in unitforms.items %}
+        <div class="flex mb-4 w-full bg-white rounded-xl p-6 shadow-sm">
+            <div class="w-full" >
+                <p class="text-l font-semibold mb-4 text-gray-800">Job Summary</p>
+                <div class="flex justify-between w-full">
+                    <div class="text-left" >
+                        <h2 class="text-l font-bold text-gray-600">UNIT {{ unit_number }}</h2>
+                        <p class="text-md font-regular mb-2 text-gray-500">{{ unit_number }}/{{ totalunits }}</p>
+                    </div>
+                    
+                    <ul class="px-4 grid grid-cols-3">
+                        <li id="" class="-mb-px mr-1 cursor-pointer">
+                            <a class="nav-tabs completetab" href="#box-cut-{{ unit_number }}" id="box-cut-{{ unit_number }}">Box Cut</a>
+                        </li>
+                        <li class="mr-1 cursor-pointer">
+                            <a class="nav-tabs incompletetab " href="#box-prep-{{ unit_number }}" id="box-prep-{{ unit_number }}">Box Prep</a>
+                        </li>
+                        <li class="mr-1 cursor-pointer">
+                            <a class="nav-tabs incompletetab" href="#hem-bar-{{ unit_number }}" id="hem-bar-{{ unit_number }}">Hem Bar</a>
+                        </li>
+                        <li class="mr-1 cursor-pointer">
+                            <a class=" nav-tabs incompletetab" href="#tracks-tab-{{ unit_number }}" id="tracks-tab-{{ unit_number }}">Tracks</a>
+                        </li>
+                        <li class="mr-1 cursor-pointer">
+                            <a class=" nav-tabs incompletetab" href="#tube-tab-{{ unit_number }}" id="tube-tab-{{ unit_number }}">Tube</a>
+                        </li>
+                        <li class="mr-1 cursor-pointer">
+                            <a class="nav-tabs incompletetab" href="#l-channel-{{ unit_number }}" id="l-channel-{{ unit_number }}">L-Channel</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex mb-4 w-full bg-white rounded-xl p-6 shadow-sm tab-content">
+            <div class="w-full">
+                    <div class="text-left">
+                        <h2 class="text-l mb-2 font-bold text-gray-600">UNIT {{ unit_number }}</h2>
+                        <p class="text-xs font-regular text-gray-500">RIGHT Handing</p>
+                        <p class="text-xs font-regular text-gray-500">Color: Light Beige</p>
+                        <p class="text-xs font-regular mb-2 text-gray-500">Motor: PREMIUM 25 SENSE</p>
+                    </div>
+                    
+
+                
+                
+                
+                <div id="box-cut-{{ unit_number }}-form" class="tab-pane active">
+                    <div class="flex items-center justify-between">
+                        <p class="text-l font-semibold mb-4 text-gray-800">Box Cut</p>
+                        <div class="hidden" id="completed-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-6">
+                                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        
+                          
+                    </div>
+                    
+
+                    <div class="mb-4 flex gap-2 items-center boxcutcheckbox-{{ unit_number }}">
+                        {{ form.box_cut_drop_used }}
+                        <label for="{{ form.box_cut_drop_used.id_for_label }}">Drop Used</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center boxcutcheckbox-{{ unit_number }}">
+                        {{ form.box_cut_hd_box }}
+                        <label for="{{ form.box_cut_hd_box.id_for_label }}">HD Box</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center boxcutcheckbox-{{ unit_number }}">
+                        {{ form.box_cut_cut_length }}
+                        <label for="{{ form.box_cut_cut_length.id_for_label }}">Cut Length</label>
+                    </div>
+
+                </div>
+                <div id="box-prep-{{ unit_number }}-form" class="tab-pane hidden">
+                    <div class="flex items-center justify-between">
+                        <p class="text-l font-semibold mb-4 text-gray-800">Box Prep</p>
+                        <div class="hidden" id="completed-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-6">
+                                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        
+                          
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.box_prep_track_notch }}
+                        <label for="{{ form.box_prep_track_notch.id_for_label }}">Track Notch</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.box_prep_drill_holes_top_back }}
+                        <label for="{{ form.box_prep_drill_holes_top_back.id_for_label }}">Drill Holes Top/Back</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.box_prep_drill_holes_front_bottom }}
+                        <label for="{{ form.box_prep_drill_holes_front_bottom.id_for_label }}">Drill Holes Front/Bottom</label>
+                    </div>
+                </div>
+                <div id="hem-bar-{{ unit_number }}-form" class="tab-pane hidden">
+                    <div class="flex items-center justify-between">
+                        <p class="text-l font-semibold mb-4 text-gray-800">Hem Bar</p>
+                        <div class="hidden" id="completed-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-6">
+                                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        
+                          
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.hem_bar_drop_used }}
+                        <label for="{{ form.hem_bar_drop_used.id_for_label }}">Drop Used</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.hem_bar_hd_hem_bar }}
+                        <label for="{{ form.hem_bar_hd_hem_bar.id_for_label }}">HD Hem Bar</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.hem_bar_cut_length }}
+                        <label for="{{ form.hem_bar_cut_length.id_for_label }}">Cut Length</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.hem_bar_drill_end_cap_screws }}
+                        <label for="{{ form.hem_bar_drill_end_cap_screws.id_for_label }}">Drill End Cap Screws</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.hem_bar_drill_hook_hole }}
+                        <label for="{{ form.hem_bar_drill_hook_hole.id_for_label }}">Drill Hook Hole</label>
+                    </div>
+                </div>
+                <div id="tracks-tab-{{ unit_number }}-form" class="tab-pane hidden">
+                    <div class="flex items-center justify-between">
+                        <p class="text-l font-semibold mb-4 text-gray-800">Tracks</p>
+                        <div class="hidden" id="completed-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-6">
+                                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        
+                          
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.tracks_drop_used }}
+                        <label for="{{ form.tracks_drop_used.id_for_label }}">Drop Used</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.tracks_hd_tracks }}
+                        <label for="{{ form.tracks_hd_tracks.id_for_label }}">HD Tracks</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.tracks_cut_length }}
+                        <label for="{{ form.tracks_cut_length.id_for_label }}">Cut Length</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.tracks_drill_mounting_holes }}
+                        <label for="{{ form.tracks_drill_mounting_holes.id_for_label }}">Drill Mounting Holes</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.tracks_drill_hook_hole }}
+                        <label for="{{ form.tracks_drill_hook_hole.id_for_label }}">Drill Hook Hole</label>
+                    </div>
+                </div>
+                <div id="tube-tab-{{ unit_number }}-form" class="tab-pane hidden">
+                    <div class="flex items-center justify-between">
+                        <p class="text-l font-semibold mb-4 text-gray-800">Tube</p>
+                        <div class="hidden" id="completed-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-6">
+                                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        
+                          
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.tube_drop_used }}
+                        <label for="{{ form.tube_drop_used.id_for_label }}">Drop Used</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.tube_length }}
+                        <label for="{{ form.tube_length.id_for_label }}">Tube Length</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.tube_cut_length }}
+                        <label for="{{ form.tube_cut_length.id_for_label }}">Cut Length</label>
+                    </div>
+                </div>
+                <div id="l-channel-{{ unit_number }}-form" class="tab-pane hidden">
+                    <div class="flex items-center justify-between">
+                        <p class="text-l font-semibold mb-4 text-gray-800">L Channel</p>
+                        <div class="hidden" id="completed-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-6">
+                                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        
+                          
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.l_channel_drop_used }}
+                        <label for="{{ form.l_channel_drop_used.id_for_label }}">Drop Used</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.l_channel_quantity }}
+                        <label for="{{ form.l_channel_quantity.id_for_label }}">Quantity</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.l_channel_cut_length }}
+                        <label for="{{ form.l_channel_cut_length.id_for_label }}">Cut Length</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.l_channel_drill_hook_hole }}
+                        <label for="{{ form.l_channel_drill_hook_hole.id_for_label }}">Drill Hook Hole</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    
+        <div class="absolute bottom-0 left-0 w-full px-4 pt-1 pb-4 bg-white shadow-md border-t-2 border-gray-100">
+            <div class="flex justify-between items-center gap-4">
+                <button type="submit" class="mt-4 px-6 py-2 bg-blue-500 text-white rounded">Save & Close</button>
+                <span  id="confirm-completed" class="cursor-pointer mt-4 px-6 py-2 bg-green-600 text-white rounded">Complete</span>
+            </div>
+        </div>
+    </form>
+    
+    </div>
+</div>
+
+<script src="{% static 'js/custom_checkbox.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabs = document.querySelectorAll('.nav-tabs');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function (e) {
+                e.preventDefault();
+                const unitNumber = this.id.split('-')[2]; // Extract unit number from id
+                const targetPaneId = this.href.split('#')[1]+"-form"; // Extract target pane id
+                const clickednavbutton = this.href.split('#')[1];
+
+                console.log(targetPaneId)
+                const tabContents = document.querySelectorAll(`#box-cut-${unitNumber}-form, #box-prep-${unitNumber}-form, #hem-bar-${unitNumber}-form, #tracks-tab-${unitNumber}-form, #tube-tab-${unitNumber}-form, #l-channel-${unitNumber}-form`);
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                    content.classList.remove('active');
+                });
+                document.getElementById(targetPaneId).classList.remove('hidden');
+                document.getElementById(targetPaneId).classList.add('active');
+                console.log(targetPaneId)
+
+                
+                
+                const unitTabs = document.querySelectorAll(`#box-cut-${unitNumber}, #box-prep-${unitNumber}, #hem-bar-${unitNumber}, #tracks-tab-${unitNumber}, #tube-tab-${unitNumber}, #l-channel-${unitNumber}`);
+                unitTabs.forEach(t => t.classList.remove('activetab'));
+                const clickedNavButton = document.getElementById(clickednavbutton);
+                if (!clickedNavButton.classList.contains('completetab')) {
+                    clickedNavButton.classList.add('activetab');
+                }
+            });
+        });
+
+
+        const updateTabClasses = function() {
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        tabPanes.forEach(pane => {
+            const unitNumber = pane.id.split('-')[2]; // Extract unit number
+            const tabs = document.querySelectorAll(`#box-cut-${unitNumber}, #box-prep-${unitNumber}, #hem-bar-${unitNumber}, #tracks-tab-${unitNumber}, #tube-tab-${unitNumber}, #l-channel-${unitNumber}`);
+
+            tabs.forEach(tab => {
+                const targetFormId = tab.getAttribute('href').substring(1) + '-form';
+                
+                const targetForm = document.getElementById(targetFormId);
+                const checkboxes = targetForm.querySelectorAll(`input[type="checkbox"]`);
+                
+                console.log(checkboxes)
+
+                const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                if (allChecked) {
+                    tab.classList.remove('incompletetab');
+                    tab.classList.remove('activetab');
+                    tab.classList.add('completetab');
+                    targetForm.querySelector("#completed-icon").classList.add("active");
+                    targetForm.querySelector("#completed-icon").classList.remove("hidden");
+                } else {
+                    tab.classList.remove('completetab');
+                    tab.classList.add('incompletetab');
+                    targetForm.querySelector("#completed-icon").classList.add("hidden");
+                    targetForm.querySelector("#completed-icon").classList.remove("active");
+                }
+            });
+        });
+    };
+
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateTabClasses);
+    });
+
+    updateTabClasses(); // Initial call to set classes on page load
+
+
+    function openPopUP() {
+        
+        document.querySelector("#confirm-completed-popup").classList.add("active")
+        document.querySelector("#confirm-completed-popup").classList.remove("hidden")
+    }
+
+    document.querySelector("#confirm-completed").addEventListener("click", ()=>{
+        document.querySelector("#confirm-completed-popup").classList.add("active")
+        document.querySelector("#confirm-completed-popup").classList.remove("hidden")
+    })
+
+    document.querySelector("#cancel-button").addEventListener("click", ()=>{
+        document.querySelector("#confirm-completed-popup").classList.add("hidden")
+        document.querySelector("#confirm-completed-popup").classList.remove("active")
+    })
+});
+</script>
+{% endblock %}

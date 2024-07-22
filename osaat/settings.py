@@ -36,11 +36,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['ossat.azurewebsites.net', '127.0.0.1']
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
+CRISPY_TEMPLATE_PACK = "tailwind"
 
 # Application definition
 
 INSTALLED_APPS = [
     "main",
+    "workstation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -48,6 +51,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'storages',
+    'crispy_forms',
+    'crispy_tailwind',
 ]
 
 MIDDLEWARE = [
@@ -156,6 +161,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"  
 STATICFILES_DIRS = [
     BASE_DIR / "main/static",
+    BASE_DIR / "workstation/static",
     BASE_DIR / "osaat/static"
 ]
 
