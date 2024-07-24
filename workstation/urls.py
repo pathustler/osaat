@@ -10,6 +10,9 @@ urlpatterns = [
     path('order/<str:po_number>/box-cut/',views.box_cut, name="box_cut"),
     path('order/<str:po_number>/box-cut/complete',views.confirm_box_cut, name="box_cut_complete"),
     
+    #search
+    path('<str:job_type>/search/', views.job_search, name="job_search"),
+    
     path('tube-cut/',views.tube_cut, name="tube_cut"),
     path('trap-prep/',views.track_prep, name="track_prep"),
     path('hardware/',views.hardware, name="hardware"),

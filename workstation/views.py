@@ -10,8 +10,16 @@ def workstation_dashboard(request):
     return render(request,"workstation/index.html")
 
 
+def job_search(request, job_type):
+    orders = Order.objects.filter(confirmed=True)
+    label = {
+        "box_cut": "Box Cut"
+    }[job_type]
+    
+    return render(request,"workstation/job_search.html", {"job_type":job_type,"label":label})
+
 def box_cut(request, po_number):
-    order = get_object_or_404(Order, po_number=po_number)
+    order = get_object_or_404(Order.objects.filter(confirmed=True), po_number=po_number)
     unitforms = dict()
     totalunits = len(order.units.all())
     print("enters")
