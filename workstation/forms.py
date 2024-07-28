@@ -1,5 +1,5 @@
 from django import forms
-from .models import Box_Cut_Job
+from .models import Box_Cut_Job, Tube_Cut_Job,Pre_Assembly_Job
 
 class BoxCutJobForm(forms.ModelForm):
     class Meta:
@@ -53,4 +53,51 @@ class BoxCutJobForm(forms.ModelForm):
             'l_channel_quantity': forms.CheckboxInput(),
             'l_channel_cut_length': forms.CheckboxInput(),
             'l_channel_drill_hook_hole': forms.CheckboxInput(),
+        }
+
+
+class TubeCutJobForm(forms.ModelForm):
+    class Meta:
+        model = Tube_Cut_Job
+        
+        fields = [
+            'tube_drop_used',
+            'tube_length',
+            'tube_cut_length',
+            'stock_drop_used',
+            'stock_cut_length',
+            
+        ]
+        widgets = {
+            'tube_drop_used': forms.CheckboxInput(),
+            'tube_length': forms.CheckboxInput(),
+            'tube_cut_length': forms.CheckboxInput(),
+            'stock_drop_used': forms.CheckboxInput(),
+            'stock_cut_length': forms.CheckboxInput(),
+        }
+        
+    
+    
+     
+    
+    
+    
+class PreAssemblyJobForm(forms.ModelForm):
+    class Meta:
+        model = Pre_Assembly_Job
+        
+        fields = [
+            'tube',
+            'box_end_caps',
+            'track',
+            'bottom_bar',
+            'side_2_l_channels',
+            
+        ]
+        widgets = {
+            'tube_drop_used': forms.CheckboxInput(),
+            'tube_length': forms.CheckboxInput(),
+            'tube_cut_length': forms.CheckboxInput(),
+            'stock_drop_used': forms.CheckboxInput(),
+            'stock_cut_length': forms.CheckboxInput(),
         }

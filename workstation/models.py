@@ -37,3 +37,29 @@ class Box_Cut_Job(models.Model):
     l_channel_cut_length = models.BooleanField(default=False)
     l_channel_drill_hook_hole = models.BooleanField(default=False)
     
+
+class Tube_Cut_Job(models.Model):
+    unit = models.ForeignKey(Unit, related_name='tube_cut_jobs', on_delete=models.CASCADE)
+    
+    job_complete = models.BooleanField(default=False)
+    
+    tube_drop_used = models.BooleanField(default=False)
+    tube_length = models.BooleanField(default=False)
+    tube_cut_length = models.BooleanField(default=False)
+    
+    stock_drop_used = models.BooleanField(default=False)
+    stock_cut_length = models.BooleanField(default=False)
+    
+    
+class Pre_Assembly_Job(models.Model):
+    unit = models.ForeignKey(Unit, related_name='pre_assembly_jobs', on_delete=models.CASCADE)
+    
+    job_complete = models.BooleanField(default=False)
+    
+    tube = models.BooleanField(default=False)
+    box_end_caps = models.BooleanField(default=False)
+    track = models.BooleanField(default=False)
+    bottom_bar = models.BooleanField(default=False)
+    side_2_l_channels = models.BooleanField(default=False)
+    
+    

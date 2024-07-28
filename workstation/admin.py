@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib import admin
-from .models import Box_Cut_Job
+from .models import Box_Cut_Job, Tube_Cut_Job, Pre_Assembly_Job
 
 # Register your models here.
 
@@ -36,3 +36,36 @@ class BoxCutJobAdmin(admin.ModelAdmin):
     search_fields = ('unit__unit_number',)
 
 admin.site.register(Box_Cut_Job, BoxCutJobAdmin)
+
+
+class TubeCutJobAdmin(admin.ModelAdmin):
+    list_display = (
+        'unit', 
+        'job_complete', 
+        'tube_drop_used',
+        'tube_length',
+        'tube_cut_length',
+        'stock_drop_used',
+        'stock_cut_length',
+    )
+    list_filter = ('unit', 'job_complete')
+    search_fields = ('unit__unit_number',)
+
+admin.site.register(Tube_Cut_Job, TubeCutJobAdmin)
+
+
+
+class PreAssemblyJobAdmin(admin.ModelAdmin):
+    list_display = (
+        'unit', 
+        'job_complete', 
+        'tube',
+        'box_end_caps',
+        'track',
+        'bottom_bar',
+        'side_2_l_channels',
+    )
+    list_filter = ('unit', 'job_complete')
+    search_fields = ('unit__unit_number',)
+
+admin.site.register(Pre_Assembly_Job,  PreAssemblyJobAdmin)

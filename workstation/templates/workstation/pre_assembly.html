@@ -119,7 +119,7 @@
                 <button id="cancel-button" class="bg-red-600 w-full text-center text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
                     Cancel
                 </button>
-                <form action="{% url 'tube_cut_confirm' order.po_number %}" method="post" class="w-full">
+                <form action="{% url 'pre_assembly_confirm' order.po_number %}" method="post" class="w-full">
                     {% csrf_token %}
                     <button type="submit" id="complete-button" class="bg-green-600 w-full text-center text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50">
                         Complete
@@ -133,7 +133,7 @@
 <div class="w-full px-4 mx-auto mt-4 flex flex-col overflow-y-auto justify-between pb-24" style="height: 80vh;">
     <div class="w-full">
     
-    <h2 class="text-2xl font-bold text-gray-600">TUBE CUT</h2>
+    <h2 class="text-2xl font-bold text-gray-600">PRE ASSEMBLY</h2>
     <p class="text-l font-semibold mb-2 text-gray-800">#{{ order.po_number }}</p>
     <div class="flex items-center justify-between">
         <p class="text-l font-semibold mb-6 text-gray-800">{{ order.customer.primary_contact }}</p>
@@ -156,10 +156,7 @@
                     
                     <ul class="px-4 grid grid-cols-3">
                         <li class="-mb-px mr-1 cursor-pointer">
-                            <a class=" nav-tabs activetab incompletetab" href="#tube-tab-{{ unit_number }}" id="tube-tab-{{ unit_number }}">Tube</a>
-                        </li>
-                        <li class="mr-1 cursor-pointer">
-                            <a class="nav-tabs incompletetab" href="#stock-tab-{{ unit_number }}" id="stock-tab-{{ unit_number }}">Stock</a>
+                            <a class=" nav-tabs activetab incompletetab" href="#prepare-subassembly-{{ unit_number }}" id="prepare-subassembly-{{ unit_number }}">Tube</a>
                         </li>
                     </ul>
                 </div>
@@ -182,9 +179,9 @@
                 
                 
 
-                <div id="tube-tab-{{ unit_number }}-form" class="tab-pane active">
+                <div id="prepare-subassembly-{{ unit_number }}-form" class="tab-pane active">
                     <div class="flex items-center justify-between">
-                        <p class="text-l font-semibold mb-4 text-gray-800">Tube</p>
+                        <p class="text-l font-semibold mb-4 text-gray-800">Prepare Sub-Assembly</p>
                         <div class="hidden" id="completed-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-6">
                                 <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
@@ -194,16 +191,24 @@
                           
                     </div>
                     <div class="mb-4 flex gap-2 items-center">
-                        {{ form.tube_drop_used }}
-                        <label for="{{ form.tube_drop_used.id_for_label }}">Drop Used</label>
+                        {{ form.tube }}
+                        <label for="{{ form.tube.id_for_label }}">Tube</label>
                     </div>
                     <div class="mb-4 flex gap-2 items-center">
-                        {{ form.tube_length }}
-                        <label for="{{ form.tube_length.id_for_label }}">Tube Length</label>
+                        {{ form.box_end_caps }}
+                        <label for="{{ form.box_end_caps.id_for_label }}">Box/End Caps</label>
                     </div>
                     <div class="mb-4 flex gap-2 items-center">
-                        {{ form.tube_cut_length }}
-                        <label for="{{ form.tube_cut_length.id_for_label }}">Cut Length</label>
+                        {{ form.track }}
+                        <label for="{{ form.track.id_for_label }}">Track</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.bottom_bar }}
+                        <label for="{{ form.bottom_bar.id_for_label }}">Bottom Bar</label>
+                    </div>
+                    <div class="mb-4 flex gap-2 items-center">
+                        {{ form.side_2_l_channels }}
+                        <label for="{{ form.side_2_l_channels.id_for_label }}">Side, 2 L-Channels</label>
                     </div>
                 </div>
 
@@ -212,26 +217,7 @@
 
 
 
-                <div id="stock-tab-{{ unit_number }}-form" class="tab-pane hidden">
-                    <div class="flex items-center justify-between">
-                        <p class="text-l font-semibold mb-4 text-gray-800">Stock</p>
-                        <div class="hidden" id="completed-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-6">
-                                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
-                            </svg>
-                        </div>
-                        
-                          
-                    </div>
-                    <div class="mb-4 flex gap-2 items-center">
-                        {{ form.stock_drop_used }}
-                        <label for="{{ form.stock_drop_used.id_for_label }}">Drop Used</label>
-                    </div>
-                    <div class="mb-4 flex gap-2 items-center">
-                        {{ form.stock_cut_length }}
-                        <label for="{{ form.stock_cut_length.id_for_label }}">Cut Length</label>
-                    </div>
-                </div>
+                
             </div>
         </div>
         {% endfor %}
@@ -259,7 +245,7 @@
                 const clickednavbutton = this.href.split('#')[1];
 
                 console.log(targetPaneId)
-                const tabContents = document.querySelectorAll(`#tube-tab-${unitNumber}-form, #stock-tab-${unitNumber}-form`);
+                const tabContents = document.querySelectorAll(`#prepare-subassembly-${unitNumber}-form`);
                 tabContents.forEach(content => {
                     content.classList.add('hidden');
                     content.classList.remove('active');
@@ -270,7 +256,7 @@
 
                 
                 
-                const unitTabs = document.querySelectorAll(`#tube-tab-${unitNumber}, #stock-tab-${unitNumber}`);
+                const unitTabs = document.querySelectorAll(`#prepare-subassembly-${unitNumber}`);
                 unitTabs.forEach(t => t.classList.remove('activetab'));
                 const clickedNavButton = document.getElementById(clickednavbutton);
                 if (!clickedNavButton.classList.contains('completetab')) {
@@ -284,7 +270,7 @@
         const tabPanes = document.querySelectorAll('.tab-pane');
         tabPanes.forEach(pane => {
             const unitNumber = pane.id.split('-')[2]; // Extract unit number
-            const tabs = document.querySelectorAll(`#tube-tab-${unitNumber}, #stock-tab-${unitNumber}`);
+            const tabs = document.querySelectorAll(`#prepare-subassembly-${unitNumber}`);
 
             tabs.forEach(tab => {
                 const targetFormId = tab.getAttribute('href').substring(1) + '-form';
