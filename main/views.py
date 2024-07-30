@@ -636,3 +636,17 @@ def schedule(request, unique_code):
         "deliveryform": deliveryform,
         "orders": Order.objects.filter(customer__unique_code=unique_code)
     })
+    
+    
+    
+def search(request):
+    query = request.GET.get('q')
+    customers = Customer.objects.filter(primary_contact__icontains=query)
+    orders = Order.objects.filter(po_number__icontains=query)
+    context = {
+        'customers': customers,
+        'orders': orders,
+        'query': query,
+        'total':len(customers)+len(orders)
+    }
+    return render(request, 'main/search_results.html', context)

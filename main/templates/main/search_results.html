@@ -1,0 +1,117 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block title %}
+<title>Search Results</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto p-16 w-3/4 h-screen overflow-y-auto">
+    <div class="mb-6">
+        
+        <form id="searchForm" action="{% url 'search' %}" method="get" class="flex items-center">
+            <input type="text" name="q" placeholder="Global Search" class="w-full p-4 border border-gray-400 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" class="bg-blue-500 text-white p-4 rounded-r-md hover:bg-blue-600"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="white" class="w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+        </button>
+        </form>
+    </div>
+    
+    <div class="p-8 border-gray-400 bg-white border rounded-md">
+        <div class="mb-8 pb-2  border-b border-gray-400 flex justify-between items-center">
+            <p class="text-l font-semibold text-gray-500 mb-4">Search Results for "{{ query }}"</p>
+            {% if total == 1 %}
+            <p class="text-md font-regular text-gray-400 mb-4">{{ total }} item found</p>
+            {% else %}
+            <p class="text-md font-regular text-gray-400 mb-4">{{ total }} items found</p>
+            {% endif %}
+            
+        </div>
+        <ul class="list-inside mb-6 list-none">
+            {% for customer in customers %}
+            <a href="{% url 'customer' customer.unique_code %}">
+                <li class="p-4 bg-gray-50 border hover:bg-gray-100  border-gray-200 flex gap-6 rounded-xl shadow-sm items-center mb-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#C7D0D9" class="w-16 h-16 mx-4">
+                        <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+                    </svg>
+                      
+                    <div class="w-full">
+                        <div class="flex justify-between mb-2">
+                            <h3 class="text-lg font-semibold text-gray-800">{{ customer.primary_contact }}</h3>
+                            <h4 class="text-md text-gray-600">{{ customer.unique_code }}</p>
+                        </div>
+                        
+                        <p class="text-sm text-gray-600">Main: {{ customer.main }}</p>
+                        <p class="text-sm text-gray-600">Mobile: {{ customer.mobile }}</p>
+                        <p class="text-sm text-gray-600">Email: {{ customer.email }}</p>
+                        <p class="text-sm text-gray-600">Website: {{ customer.website }}</p>
+    
+                    </div>
+                    
+                </li>
+            </a>
+           
+            {% endfor %}
+
+            {% for order in orders %}
+            {% if order.confirmed %}
+            <a href="{% url 'orderinfo' order.customer.unique_code order.po_number  %}">
+            {% else %}
+            <a href="{% url 'confirmation' order.customer.unique_code order.po_number  %}">
+            {% endif %}
+                <li class="p-4 bg-gray-50 hover:bg-gray-100 border border-gray-200  flex gap-6 rounded-xl shadow-sm items-center mb-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#C7D0D9" class="w-16 h-16 mx-4">
+                        <path d="M12.378 1.602a.75.75 0 0 0-.756 0L3 6.632l9 5.25 9-5.25-8.622-5.03ZM21.75 7.93l-9 5.25v9l8.628-5.032a.75.75 0 0 0 .372-.648V7.93ZM11.25 22.18v-9l-9-5.25v8.57a.75.75 0 0 0 .372.648l8.628 5.033Z" />
+                    </svg>
+                    
+                    <div class="w-full">
+                        <div class="flex justify-between mb-2">
+                            <h3 class="text-lg font-semibold text-gray-800">#{{ order.po_number }}</h3>
+                            {% if order.confirmed %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" class="w-6">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+                            </svg>
+                            
+                            {% else %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#C41B07" class="w-6">
+                                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" clip-rule="evenodd" />
+                            </svg>
+                            
+                            
+                            {% endif %}
+                            
+                        </div>
+                    
+                        
+                        
+                        
+                        
+                        <p class="text-sm text-gray-600">Account Name: {{ order.account_name }}</p>
+                        <p class="text-sm text-gray-600">Customer: {{ order.customer.primary_contact }} - {{order.customer.unique_code}}</p>
+                        <p class="text-sm text-gray-600">Ship To: {{ order.ship_to }}</p>
+                        <p class="text-sm text-gray-600">Website: {{ order.phone }}</a></p>
+
+                    </div>
+                    
+                </li>
+            </a>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var query = this.querySelector('input[name="q"]').value;
+        if (query) {
+            window.location.href = this.action + '?q=' + encodeURIComponent(query);
+        }
+    });
+</script>
+
+{% endblock %}

@@ -22,6 +22,7 @@ urlpatterns = [
     path('customer/<str:unique_code>/order/<str:po_number>/confirmation', views.confirmation, name="confirmation"),
     path('customer/<str:unique_code>/order/<str:po_number>/place_order', views.place_order, name="place_order"),
     path('orderplaced', views.order_already_placed_error, name="order_already_placed_error"),
+    path('search/', views.search, name='search'),
     
     #CALENDARS
     path('calendar/technician_calendar', views.technician_calendar, name='technician_calendar'),
