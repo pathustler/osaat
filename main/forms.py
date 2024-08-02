@@ -144,6 +144,8 @@ class ScheduleDeliveryEventForm(forms.ModelForm):
         
         self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
         self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        
+        
 
 
 
@@ -158,13 +160,20 @@ class TechnicianEventForm(forms.ModelForm):
         ]
         
     def __init__(self, *args, **kwargs):
-        super(TechnicianEventForm, self).__init__(*args, **kwargs)
+        unique_code = kwargs.pop('unique_code', None)
+        super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'border-2 border-gray-300 px-2 rounded-md h-8 items-center'})
         self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
         self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
         self.fields['appointment_notes'].widget.attrs.update({'class':"w-full rounded-md border-2 h-36 border-gray-300 p-2", "placeholder":"Add Appointment Notes"})
+        
+        if unique_code:
+            self.fields['order'].queryset = Order.objects.filter(customer__unique_code=unique_code, confirmed=True)
             
+            
+            
+                  
 class SalesEventForm(forms.ModelForm):
     class Meta:
         model = SalesEvent
@@ -174,6 +183,7 @@ class SalesEventForm(forms.ModelForm):
         ]
         
     def __init__(self, *args, **kwargs):
+        unique_code = kwargs.pop('unique_code', None)
         super(SalesEventForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'border-2 border-gray-300 px-2 rounded-md h-8'})
@@ -181,7 +191,13 @@ class SalesEventForm(forms.ModelForm):
         self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
         self.fields['appointment_notes'].widget.attrs.update({'class':"w-full rounded-md border-2 h-36 border-gray-300 p-2", "placeholder":"Add Appointment Notes"})
 
-
+        if unique_code:
+            self.fields['order'].queryset = Order.objects.filter(customer__unique_code=unique_code, confirmed=True)
+            
+            
+            
+            
+            
 class DeliveryEventForm(forms.ModelForm):
     class Meta:
         model = DeliveryEvent

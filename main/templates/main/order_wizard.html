@@ -1,0 +1,289 @@
+{% extends 'calendar/layout.html' %}
+{% load static %}
+
+{% block title %}
+<title>Order Page</title>
+{% endblock %}
+
+{% block content %}
+<div class="flex w-full justify-between gap-16 px-16 mx-auto" style="height: 80vh;">
+    <form method="post" id="orderForm" class="flex w-full justify-between gap-16 mx-auto">
+        {% csrf_token %}
+        <div class="bg-white p-8 rounded-2xl my-auto w-1/2 h-full">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-2xl font-bold">New Order</h1>
+            </div>
+            <div class="grid my-auto h-full">
+                <div class="space-y-3 overflow-y-auto">
+                    {{ oform.non_field_errors }}
+                    <div>
+                        <label class="block text-sm font-bold">ACCOUNT NAME</label>
+                        {{ oform.account_name }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold">PO #</label>
+                        {{ oform.po_number }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold">SHIP TO</label>
+                        {{ oform.ship_to }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold">SHIPPING ADDRESS</label>
+                        {{ oform.shipping_address }}
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold">CITY</label>
+                            {{ oform.city }}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold">STATE</label>
+                            {{ oform.state }}
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold">ZIP</label>
+                            {{ oform.zip_code }}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold">PHONE</label>
+                            {{ oform.phone }}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold">SHIP VIA</label>
+                        {{ oform.ship_via }}
+                    </div>
+                    <div class="mt-2">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-sm font-bold">INSTALLATION ADDRESS</label>
+                            <div class="text-gray-400 text-sm">
+                                <label class="mr-3 text-sm">SAME AS SHIPPING</label>
+                                {{ oform.installation_address_same_as_shipping }}
+                            </div>
+                        </div>
+                        {{ oform.installation_address }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-2xl w-full">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-2xl font-bold">Add Unit</h1>
+            </div>
+            <div id="unitFormContainer" class=" flex flex-col justify-between mb-12">
+                <div id="unit-forms-container" class="space-y-4 pb-4 mb-4 px-6 overflow-y-auto" style="height: 60vh;">
+                    <div class="unit-form" data-index="0">
+                        <div class="flex justify-between">
+                            <h2 class="font-bold">UNIT 1</h2>
+                            <div class="flex items-center gap-2">
+                                {{ form.manual_shade }}
+                                <label>MANUAL SHADE</label>
+                            </div>
+                        </div>
+                        <div class="space-y-4 gap-4">
+                            <div>
+                                <label class="block font-bold">PRODUCT TYPE</label>
+                                {{ form.product_type }}
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold">WIDTH (INCHES)</label>
+                                    {{ form.width }}
+                                </div>
+                                <div>
+                                    <label class="block font-bold">DROP (INCHES)</label>
+                                    {{ form.drop }}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold">HANDING</label>
+                                    {{ form.handing }}
+                                </div>
+                                <div>
+                                    <label class="block font-bold">MOTOR TYPE</label>
+                                    {{ form.motor_type }}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold">FABRIC TYPE</label>
+                                    {{ form.fabric_type }}
+                                </div>
+                                <div>
+                                    <label class="block font-bold">FABRIC COLOR</label>
+                                    {{ form.fabric_color }}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold">MOUNTING</label>
+                                    {{ form.mounting }}
+                                </div>
+                                <div>
+                                    <label class="block font-bold">ACCESSORY</label>
+                                    {{ form.accessory }}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold">REMOTE TYPE</label>
+                                    {{ form.remote_type }}
+                                </div>
+                                <div>
+                                    <label class="block font-bold">HAND BRACE</label>
+                                    {{ form.hand_brace }}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold">HARDWARE COLOR</label>
+                                    {{ form.hardware_color }}
+                                </div>
+                                <div>
+                                    <label class="block font-bold">BOX COLOR</label>
+                                    {{ form.box_color }}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold">CABLE MOUNT</label>
+                                    {{ form.cable_mount }}
+                                </div>
+                                <div>
+                                    <label class="block font-bold">CABLE SIZE</label>
+                                    {{ form.cable_size }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-bold">PILE BRUSH</label>
+                                {{ form.pile_brush }}
+                            </div>
+                        </div>
+                        <hr class="border-t border-gray-400 my-12">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center gap-6">
+                    <button id="addUnitBtn" type="button"  class="w-full border-2 h-10 border-gray-700 text-center flex inset-2 box-border hover:bg-gray-700 hover:text-white text-gray-700 rounded-md px-4 items-center justify-center">Add Unit</button>
+                    <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2">Continue</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addUnitBtn = document.getElementById('addUnitBtn');
+    const unitFormsContainer = document.getElementById('unit-forms-container');
+    let unitCount = 0;
+
+    addUnitBtn.addEventListener('click', function() {
+        unitCount++;
+        const newUnitForm = document.querySelector('.unit-form').cloneNode(true);
+        newUnitForm.setAttribute('data-index', unitCount);
+        
+        const unitHeader = newUnitForm.querySelector('h2');
+        unitHeader.textContent = `UNIT ${unitCount + 1}`;
+        
+        // Create delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.textContent = '⊗';
+        deleteButton.classList.add('px-2', 'text-red-600', 'rounded', 'ml-2' );
+        deleteButton.addEventListener('click', function() {
+            newUnitForm.remove();
+        });
+        
+        // Add delete button next to the unit header
+        unitHeader.appendChild(deleteButton);
+
+        newUnitForm.querySelectorAll('input, select').forEach((input) => {
+            const name = input.getAttribute('name');
+            if (name) {
+                const newName = name.replace(/unit-0-/, `unit-${unitCount}-`);
+                input.setAttribute('name', newName);
+                input.setAttribute('id', `id_${newName}`);
+                input.value = '';
+            }
+        });
+
+        unitFormsContainer.appendChild(newUnitForm);
+        
+        // Scroll to 100px from the bottom of the container with animation
+        const targetScrollTop = unitFormsContainer.scrollHeight - unitFormsContainer.clientHeight;
+        const duration = 500; // Duration in milliseconds
+        const startTime = performance.now();
+        const startScrollTop = unitFormsContainer.scrollTop;
+        
+        function scrollStep(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            unitFormsContainer.scrollTop = startScrollTop + progress * (targetScrollTop - startScrollTop);
+            
+            if (progress < 1) {
+                requestAnimationFrame(scrollStep);
+            }
+        }
+
+        requestAnimationFrame(scrollStep);
+    });
+});
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+        const manualShadeCheckbox = document.getElementById('manualshade');
+        const remoteTypeField = document.getElementById('remote_type').parentElement;
+        const hand_brace = document.getElementById('hand_brace').parentElement;
+        const cable_mount = document.getElementById('cable_mount').parentElement;
+        const cable_size = document.getElementById('cable_size').parentElement;
+
+        function toggleRemoteField() {
+            if (manualShadeCheckbox.checked) {
+                remoteTypeField.style.display = 'none';
+                hand_brace.style.display = 'none';
+                cable_mount.style.display = 'block';
+                cable_size.style.display = 'block';
+
+                document.getElementById('remote_type').value = '';
+                document.getElementById('hand_brace').value = '';
+
+            } else {
+                remoteTypeField.style.display = 'block';
+                hand_brace.style.display = 'block';
+                cable_mount.style.display = 'none';
+                cable_size.style.display = 'none';
+
+                document.getElementById('cable_mount').value = ''; 
+                document.getElementById('cable_size').value = '';
+            }
+        }
+
+        manualShadeCheckbox.addEventListener('change', toggleRemoteField);
+
+        // Initial check on page load
+        toggleRemoteField();
+    });
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock %}

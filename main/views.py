@@ -12,6 +12,8 @@ from django.db.models import Q
 import boto3
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.forms import modelformset_factory
+from django.db import transaction
 
 
 # Create your views here.
@@ -95,8 +97,8 @@ def customer(request, unique_code):
     
     
     if request.method == 'POST':
-        techform = TechnicianEventForm(request.POST)
-        salesform = SalesEventForm(request.POST)
+        techform = TechnicianEventForm(request.POST,unique_code=unique_code)
+        salesform = SalesEventForm(request.POST,unique_code=unique_code)
         deliveryform = DeliveryEventForm(request.POST)
         job_forms_data = request.POST.getlist('jobs')
         
@@ -125,8 +127,8 @@ def customer(request, unique_code):
             delivery_event.save()
             return redirect(reverse('delivery_calendar'))
     else:
-        techform = TechnicianEventForm()
-        salesform = SalesEventForm()
+        techform = TechnicianEventForm(unique_code=unique_code)
+        salesform = SalesEventForm(unique_code=unique_code)
         deliveryform = DeliveryEventForm()
 
     return render(request, 'main/customer.html', {
@@ -487,7 +489,7 @@ def update_technician_event(request, event_id):
             return redirect(reverse('technician_calendar'))
     else:
         form = EditTechnicianEventForm(instance=event)
-    return render(request, 'calendar/sales_calendar.html', {'form': form, 'event_id': event_id, "a":a,"event":event})
+    return render(request, 'calendar/technician_calendar.html', {'form': form, 'event_id': event_id, "a":a,"event":event})
 
 def update_sales_event(request, event_id):
     a=1
@@ -601,6 +603,7 @@ def schedule(request, unique_code):
         job_order_ids = request.POST.getlist('job_order')
         job_titles = request.POST.getlist('job_title')
 
+
         if techform.is_valid():
             tech_event = techform.save(commit=False)
             tech_event.save()
@@ -626,8 +629,6 @@ def schedule(request, unique_code):
         techform = TechnicianEventForm()
         salesform = SalesEventForm()
         deliveryform = DeliveryEventForm()
-    for i in Order.objects.filter(customer__unique_code=unique_code):
-        print(i.customer.unique_code)
     
     return render(request, 'calendar/schedule.html', {
         "customer": customer,
@@ -650,3 +651,136 @@ def search(request):
         'total':len(customers)+len(orders)
     }
     return render(request, 'main/search_results.html', context)
+
+
+
+from django.shortcuts import get_object_or_404, render, redirect
+from django.db import transaction
+from django.http import HttpResponseBadRequest
+from .models import Customer, Order, Unit
+from .forms import OrderForm, UnitForm
+
+def order_wizard(request, unique_code):
+    customer = get_object_or_404(Customer, unique_code=unique_code)
+
+    if request.method == 'POST':
+        order_form = OrderForm(request.POST)
+
+        # Retrieve all unit form fields as lists
+        product_types = request.POST.getlist('product_type')
+        widths = request.POST.getlist('width')
+        drops = request.POST.getlist('drop')
+        handings = request.POST.getlist('handing')
+        motor_types = request.POST.getlist('motor_type')
+        fabric_types = request.POST.getlist('fabric_type')
+        fabric_colors = request.POST.getlist('fabric_color')
+        mountings = request.POST.getlist('mounting')
+        accessories = request.POST.getlist('accessory')
+        remote_types = request.POST.getlist('remote_type')
+        hand_braces = request.POST.getlist('hand_brace')
+        hardware_colors = request.POST.getlist('hardware_color')
+        box_colors = request.POST.getlist('box_color')
+        cable_mounts = request.POST.getlist('cable_mount')
+        cable_sizes = request.POST.getlist('cable_size')
+        pile_brushes = request.POST.getlist('pile_brush')
+
+        unit_forms_data = []
+
+        for i in range(len(product_types)):
+            unit_data = {
+                'product_type': product_types[i],
+                'width': widths[i],
+                'drop': drops[i],
+                'handing': handings[i],
+                'motor_type': motor_types[i],
+                'fabric_type': fabric_types[i],
+                'fabric_color': fabric_colors[i],
+                'mounting': mountings[i],
+                'accessory': accessories[i],
+                'remote_type': remote_types[i],
+                'hand_brace': hand_braces[i],
+                'hardware_color': hardware_colors[i],
+                'box_color': box_colors[i],
+                'cable_mount': cable_mounts[i],
+                'cable_size': cable_sizes[i],
+                'pile_brush': pile_brushes[i],
+            }
+            unit_forms_data.append(unit_data)
+
+        unit_forms = [UnitForm(data) for data in unit_forms_data]
+
+        if order_form.is_valid() and all(form.is_valid() for form in unit_forms):
+            with transaction.atomic():
+                order = order_form.save(commit=False)
+                order.customer = customer
+                order.save()
+
+                for i, form in enumerate(unit_forms):
+                    unit = form.save(commit=False)
+                    unit.order = order
+                    unit.unit_number = i + 1  # Assigning the unit number
+                    unit.save()
+
+            return redirect('confirmation', unique_code=unique_code, po_number=order.po_number)  # Replace with your success URL
+
+        else:
+            return render(request, 'main/order_wizard.html', {
+                'customer': customer,
+                'oform': order_form,
+                'unit_forms': unit_forms,
+            })
+
+    else:
+        order_form = OrderForm()
+        unit_form = UnitForm()
+
+    return render(request, 'main/order_wizard.html', {
+        'customer': customer,
+        'oform': order_form,
+        'form': unit_form,
+    })
+    
+    
+    
+@login_required
+def orderfake(request, unique_code):
+    customer = get_object_or_404(Customer, unique_code=unique_code)
+    
+    customer = get_object_or_404(Customer, unique_code=unique_code)
+    order = get_object_or_404(Order, po_number=po_number)
+    unit_number = len(order.units.all()) + 1
+    if order.confirmed:
+        return redirect('order_already_placed_error')
+    
+    
+    if request.method == 'POST':
+        unit_form = UnitForm(request.POST)
+        if unit_form.is_valid():
+            unit = unit_form.save(commit=False)
+            unit.order = order
+            unit.unit_number = unit_number
+            unit.save()
+        else:
+            print("INVALID")
+            print(unit_form.errors) 
+    else:
+        unit_form = UnitForm()
+
+    
+    if request.method == 'POST':
+        order_form = OrderForm(request.POST)
+        if order_form.is_valid():
+            order = order_form.save(commit=False)
+            order.customer = customer
+            order.save()
+            # Redirect to a success page or another view
+            return redirect('unit', unique_code=unique_code, po_number=order.po_number) 
+        else:
+            print("INVALID")
+    else:
+        order_form = OrderForm()
+    
+    return render(request, 'main/order_entry.html', {
+        'oform': order_form,
+        'customer': customer,
+    })
