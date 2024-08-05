@@ -41,7 +41,7 @@ class Job(admin.ModelAdmin):
 
 @admin.register(DeliveryEvent)
 class DeliveryEventAdmin(admin.ModelAdmin):
-    list_display = ('title', 'address', 'start_time', 'end_time')
+    list_display = ('title', 'address', 'start_time', 'end_time','route')
     search_fields = ('title', 'address')
     list_filter = ('start_time', 'end_time')
     filter_horizontal = ('jobs',)

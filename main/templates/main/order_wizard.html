@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const unitFormsContainer = document.getElementById('unit-forms-container');
     let unitCount = 0;
 
-    addUnitBtn.addEventListener('click', function() {
+    function addUnitForm() {
         unitCount++;
         const newUnitForm = document.querySelector('.unit-form').cloneNode(true);
         newUnitForm.setAttribute('data-index', unitCount);
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         unitFormsContainer.appendChild(newUnitForm);
         
         // Scroll to 100px from the bottom of the container with animation
-        const targetScrollTop = unitFormsContainer.scrollHeight - unitFormsContainer.clientHeight;
+        const targetScrollTop = unitFormsContainer.scrollHeight - unitFormsContainer.clientHeight - 100;
         const duration = 500; // Duration in milliseconds
         const startTime = performance.now();
         const startScrollTop = unitFormsContainer.scrollTop;
@@ -233,9 +233,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         requestAnimationFrame(scrollStep);
-    });
-});
 
+        // Add event listener to the new manual shade checkbox
+        const manualShadeCheckbox = newUnitForm.querySelector('[name*="manual_shade"]');
+        if (manualShadeCheckbox) {
+            manualShadeCheckbox.addEventListener('change', toggleFields.bind(null, newUnitForm));
+            toggleFields(newUnitForm);
+        }
+    }
+
+    function toggleFields(unitForm) {
+        const manualShadeCheckbox = unitForm.querySelector('[name*="manual_shade"]');
+        const remoteTypeField = unitForm.querySelector('[name*="remote_type"]').parentElement;
+        const handBraceField = unitForm.querySelector('[name*="hand_brace"]').parentElement;
+        const cableMountField = unitForm.querySelector('[name*="cable_mount"]').parentElement;
+        const cableSizeField = unitForm.querySelector('[name*="cable_size"]').parentElement;
+
+        if (manualShadeCheckbox.checked) {
+            remoteTypeField.style.display = 'none';
+            handBraceField.style.display = 'none';
+            cableMountField.style.display = 'block';
+            cableSizeField.style.display = 'block';
+
+            unitForm.querySelector('[name*="remote_type"]').value = '';
+            unitForm.querySelector('[name*="hand_brace"]').value = '';
+
+        } else {
+            remoteTypeField.style.display = 'block';
+            handBraceField.style.display = 'block';
+            cableMountField.style.display = 'none';
+            cableSizeField.style.display = 'none';
+
+            unitForm.querySelector('[name*="cable_mount"]').value = ''; 
+            unitForm.querySelector('[name*="cable_size"]').value = '';
+        }
+    }
+
+    addUnitBtn.addEventListener('click', addUnitForm);
+
+    // Initial setup for the existing unit form
+    const initialManualShadeCheckbox = document.querySelector('.unit-form [name*="manual_shade"]');
+    if (initialManualShadeCheckbox) {
+        initialManualShadeCheckbox.addEventListener('change', toggleFields.bind(null, document.querySelector('.unit-form')));
+        toggleFields(document.querySelector('.unit-form'));
+    }
+});
 
 
 

@@ -25,12 +25,16 @@
             <!-- Search and Logout Section -->
             <div class="flex items-center gap-12">
                 <!-- Search Bar -->
-                <div class="flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#888" class="w-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                    </svg>
-                    <input type="text" placeholder="Global Search" class="p-2 border border-gray-400 rounded">
-                </div>
+                <form id="searchForm" action="{% url 'search' %}" method="get" class="w-full flex flex-row items-center justify-center gap-3">
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#888" class="w-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+
+                    </button>
+                    
+                    <input type="text" name="q" placeholder="Global Search" class="w-full p-2 border border-gray-400 rounded">
+                </form>
         
                 <!-- Logout Button -->
                 <form method="post" action="{% url 'logout' %}">
@@ -68,6 +72,19 @@
 </script> 
 
 {% block script %}
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var query = this.querySelector('input[name="q"]').value;
+        if (query) {
+            var newWindow = window.open(this.action + '?q=' + encodeURIComponent(query), '_blank');
+        }
+        if (newWindow) {
+            newWindow.focus();
+        }
+    });
+</script>
 
 {% endblock %}
 

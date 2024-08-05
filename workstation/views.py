@@ -30,8 +30,10 @@ def box_cut(request, po_number):
     unitforms = dict()
     totalunits = len(order.units.all())
     print("enters")
+    
 
-    if request.method == 'POST':
+    editcomplete = request.POST.get('editcomplete') == 'true'
+    if request.method == 'POST' and not(editcomplete):
         print("post")
         for unit in order.units.all():
             box_cut_job = Box_Cut_Job.objects.filter(unit=unit).first()
@@ -82,7 +84,11 @@ def box_cut(request, po_number):
             order_complete =True
             
     if order_complete:
-        return render(request, "workstation/job_complete.html", {"po_number":order.po_number,"label":"Box Cut","link":"box_cut"})
+        if editcomplete:
+            return render(request, "workstation/box_cut.html", {'unitforms': unitforms, 'order': order, 'totalunits':totalunits})
+            
+        else:
+            return render(request, "workstation/job_complete.html", {"po_number":order.po_number,"label":"Box Cut","link":"box_cut"})
         
 
     return render(request, "workstation/box_cut.html", {'unitforms': unitforms, 'order': order, 'totalunits':totalunits})
@@ -133,7 +139,8 @@ def tube_cut(request, po_number):
     totalunits = len(order.units.all())
     print("enters")
 
-    if request.method == 'POST':
+    editcomplete = request.POST.get('editcomplete') == 'true'
+    if request.method == 'POST' and not(editcomplete):
         print("post")
         for unit in order.units.all():
             tube_cut_job = Tube_Cut_Job.objects.filter(unit=unit).first()
@@ -180,7 +187,11 @@ def tube_cut(request, po_number):
         else:
             order_complete =True
     if order_complete:
-        return render(request, "workstation/job_complete.html", {"po_number":order.po_number,"label":"Tube Cut","link":"tube_cut"})
+        if editcomplete:
+            return render(request, "workstation/tube_cut.html", {'unitforms': unitforms, 'order': order, 'totalunits':totalunits})
+            
+        else:
+            return render(request, "workstation/job_complete.html", {"po_number":order.po_number,"label":"Tube Cut","link":"tube_cut"})
         
 
     return render(request, "workstation/tube_cut.html", {'unitforms': unitforms, 'order': order, 'totalunits':totalunits})
@@ -214,7 +225,8 @@ def pre_assembly(request, po_number):
     totalunits = len(order.units.all())
     print("enters")
 
-    if request.method == 'POST':
+    editcomplete = request.POST.get('editcomplete') == 'true'
+    if request.method == 'POST' and not(editcomplete):
         print("post")
         for unit in order.units.all():
             pre_assembly_job = Pre_Assembly_Job.objects.filter(unit=unit).first()
@@ -246,7 +258,6 @@ def pre_assembly(request, po_number):
                 form = PreAssemblyJobForm(instance=pre_assembly_job, prefix=str(unit.id))
             else:
                 # Create a new Box_Cut_Job instance with default values
-       
                 pre_assembly_job = Pre_Assembly_Job(unit=unit)
                 pre_assembly_job.save()  # Save the new instance with default values
                 form = PreAssemblyJobForm(instance=pre_assembly_job, prefix=str(unit.id))
@@ -261,7 +272,11 @@ def pre_assembly(request, po_number):
         else:
             order_complete =True
     if order_complete:
-        return render(request, "workstation/job_complete.html", {"po_number":order.po_number,"label":"Pre Assembly","link":"pre_assembly"})
+        if editcomplete:
+            return render(request, "workstation/pre_assembly.html", {'unitforms': unitforms, 'order': order, 'totalunits':totalunits})
+            
+        else:
+            return render(request, "workstation/job_complete.html", {"po_number":order.po_number,"label":"Pre Assembly","link":"pre_assembly"})
         
 
     return render(request, "workstation/pre_assembly.html", {'unitforms': unitforms, 'order': order, 'totalunits':totalunits})

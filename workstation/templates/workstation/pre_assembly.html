@@ -1,11 +1,11 @@
 {% extends 'workstation/layout.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block head %}
 <style>
 .completetab{
     background-color: rgb(22 163 74);
-    width: 6rem;
     margin-bottom: 0.75rem;
     text-align: center;
     font-size: 0.875rem /* 14px */;
@@ -28,7 +28,7 @@
 
 .activetab{
     background-color: rgb(50 50 50) !important;
-    width: 6rem;
+
     margin-bottom: 0.75rem;
     text-align: center;
     font-size: 0.875rem /* 14px */;
@@ -51,7 +51,7 @@
 
 .activetab{
     background-color: rgb(22 163 74);
-    width: 6rem;
+
     margin-bottom: 0.75rem;
     text-align: center;
     font-size: 0.875rem /* 14px */;
@@ -74,7 +74,7 @@
 
 .incompletetab {
     background-color: white;
-    width: 6rem;
+
     margin-bottom: 0.75rem;
     text-align: center;
     font-size: 0.875rem /* 14px */;
@@ -96,6 +96,8 @@
     color: rgb(255 255 255);
 
 }
+
+        
 
 </style>
 
@@ -154,7 +156,7 @@
                         <p class="text-md font-regular mb-2 text-gray-500">{{ unit_number }}/{{ totalunits }}</p>
                     </div>
                     
-                    <ul class="px-4 grid grid-cols-3">
+                    <ul class="px-4 ">
                         <li class="-mb-px mr-1 cursor-pointer">
                             <a class=" nav-tabs activetab incompletetab" href="#prepare-subassembly-{{ unit_number }}" id="prepare-subassembly-{{ unit_number }}">Prepare Sub-Assembly</a>
                         </li>
@@ -190,26 +192,29 @@
                         
                           
                     </div>
-                    <div class="mb-4 flex gap-2 items-center">
-                        {{ form.tube }}
-                        <label for="{{ form.tube.id_for_label }}">Tube</label>
+                    <div class="flex gap-4 mb-4 flex-wrap">
+                        <div class="text-center ">
+                            {{ form.tube }}
+                            <label class="unchecked" id="checkboxlabel" for="{{ form.tube.id_for_label }}">Tube</label>
+                        </div>
+                        <div class="text-center">
+                            {{ form.box_end_caps }}
+                            <label  class="unchecked" id="checkboxlabel"  for="{{ form.box_end_caps.id_for_label }}">Box/End Caps</label>
+                        </div>
+                        <div class="text-center">
+                            {{ form.track }}
+                            <label class="unchecked" id="checkboxlabel"  for="{{ form.track.id_for_label }}">Track</label>
+                        </div>
+                        <div class="text-center">
+                            {{ form.bottom_bar }}
+                            <label class="unchecked" id="checkboxlabel"  for="{{ form.bottom_bar.id_for_label }}">Bottom Bar</label>
+                        </div>
+                        <div class="text-center">
+                            {{ form.side_2_l_channels }}
+                            <label class="unchecked" id="checkboxlabel"  for="{{ form.side_2_l_channels.id_for_label }}">Side, 2 L-Channels</label>
+                        </div>
                     </div>
-                    <div class="mb-4 flex gap-2 items-center">
-                        {{ form.box_end_caps }}
-                        <label for="{{ form.box_end_caps.id_for_label }}">Box/End Caps</label>
-                    </div>
-                    <div class="mb-4 flex gap-2 items-center">
-                        {{ form.track }}
-                        <label for="{{ form.track.id_for_label }}">Track</label>
-                    </div>
-                    <div class="mb-4 flex gap-2 items-center">
-                        {{ form.bottom_bar }}
-                        <label for="{{ form.bottom_bar.id_for_label }}">Bottom Bar</label>
-                    </div>
-                    <div class="mb-4 flex gap-2 items-center">
-                        {{ form.side_2_l_channels }}
-                        <label for="{{ form.side_2_l_channels.id_for_label }}">Side, 2 L-Channels</label>
-                    </div>
+                    
                 </div>
 
 
@@ -322,4 +327,35 @@
     })
 });
 </script>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxButtons = document.querySelectorAll('.checkbox-button');
+
+        checkboxButtons.forEach(function(button) {
+            const checkbox = button.querySelector('input[type="checkbox"]');
+            button.addEventListener('click', function() {
+                checkbox.checked = !checkbox.checked;
+                if (checkbox.checked) {
+                    button.classList.remove('uncheckedbox');
+                    button.classList.add('checkedbox');
+                } else {
+                    button.classList.remove('checkedbox');
+                    button.classList.add('uncheckedbox');
+                }
+            });
+            // Initial state check
+            if (checkbox.checked) {
+                button.classList.add('checkedbox');
+            } else {
+                button.classList.add('uncheckedbox');
+            }
+        });
+    });
+</script>
+
+
+
 {% endblock %}

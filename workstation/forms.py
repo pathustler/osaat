@@ -1,5 +1,17 @@
 from django import forms
 from .models import Box_Cut_Job, Tube_Cut_Job,Pre_Assembly_Job
+from django.utils.safestring import mark_safe
+
+
+
+
+
+class CustomCheckboxInput(forms.CheckboxInput):
+    template_name = 'widgets/button_checkbox.html'
+    
+    
+    
+    
 
 class BoxCutJobForm(forms.ModelForm):
     class Meta:
@@ -30,29 +42,29 @@ class BoxCutJobForm(forms.ModelForm):
             'l_channel_drill_hook_hole',
         ]
         widgets = {
-            'box_cut_drop_used': forms.CheckboxInput(),
-            'box_cut_hd_box': forms.CheckboxInput(),
-            'box_cut_cut_length': forms.CheckboxInput(),
-            'box_prep_track_notch': forms.CheckboxInput(),
-            'box_prep_drill_holes_top_back': forms.CheckboxInput(),
-            'box_prep_drill_holes_front_bottom': forms.CheckboxInput(),
-            'hem_bar_drop_used': forms.CheckboxInput(),
-            'hem_bar_hd_hem_bar': forms.CheckboxInput(),
-            'hem_bar_cut_length': forms.CheckboxInput(),
-            'hem_bar_drill_end_cap_screws': forms.CheckboxInput(),
-            'hem_bar_drill_hook_hole': forms.CheckboxInput(),
-            'tracks_drop_used': forms.CheckboxInput(),
-            'tracks_hd_tracks': forms.CheckboxInput(),
-            'tracks_cut_length': forms.CheckboxInput(),
-            'tracks_drill_mounting_holes': forms.CheckboxInput(),
-            'tracks_drill_hook_hole': forms.CheckboxInput(),
-            'tube_drop_used': forms.CheckboxInput(),
-            'tube_length': forms.CheckboxInput(),
-            'tube_cut_length': forms.CheckboxInput(),
-            'l_channel_drop_used': forms.CheckboxInput(),
-            'l_channel_quantity': forms.CheckboxInput(),
-            'l_channel_cut_length': forms.CheckboxInput(),
-            'l_channel_drill_hook_hole': forms.CheckboxInput(),
+            'box_cut_drop_used': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'box_cut_hd_box': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'box_cut_cut_length': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'box_prep_track_notch': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'box_prep_drill_holes_top_back': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'box_prep_drill_holes_front_bottom': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'hem_bar_drop_used': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'hem_bar_hd_hem_bar': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'hem_bar_cut_length': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'hem_bar_drill_end_cap_screws': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'hem_bar_drill_hook_hole': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tracks_drop_used': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tracks_hd_tracks': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tracks_cut_length': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tracks_drill_mounting_holes': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tracks_drill_hook_hole': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tube_drop_used': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tube_length': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tube_cut_length': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'l_channel_drop_used': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'l_channel_quantity': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'l_channel_cut_length': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'l_channel_drill_hook_hole': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
         }
 
 
@@ -69,35 +81,33 @@ class TubeCutJobForm(forms.ModelForm):
             
         ]
         widgets = {
-            'tube_drop_used': forms.CheckboxInput(),
-            'tube_length': forms.CheckboxInput(),
-            'tube_cut_length': forms.CheckboxInput(),
-            'stock_drop_used': forms.CheckboxInput(),
-            'stock_cut_length': forms.CheckboxInput(),
+            'tube_drop_used': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tube_length': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'tube_cut_length': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'stock_drop_used': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'stock_cut_length': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
         }
         
     
     
      
-    
+     
     
     
 class PreAssemblyJobForm(forms.ModelForm):
     class Meta:
         model = Pre_Assembly_Job
-        
         fields = [
             'tube',
             'box_end_caps',
             'track',
             'bottom_bar',
             'side_2_l_channels',
-            
         ]
         widgets = {
-            'tube_drop_used': forms.CheckboxInput(),
-            'tube_length': forms.CheckboxInput(),
-            'tube_cut_length': forms.CheckboxInput(),
-            'stock_drop_used': forms.CheckboxInput(),
-            'stock_cut_length': forms.CheckboxInput(),
+            'tube': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'box_end_caps': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'track': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'bottom_bar': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
+            'side_2_l_channels': forms.CheckboxInput(attrs={'class': 'hidden cursor-pointer'}),
         }

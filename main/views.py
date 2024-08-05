@@ -444,7 +444,8 @@ def get_delivery_events(request):
             'start': event.start_time.isoformat(),
             'end': event.end_time.isoformat(),
             'color': color,
-            'group':group
+            'group':group,
+            'route':event.get_route_display(),
         })
 
     return JsonResponse(events_data, safe=False)
@@ -523,7 +524,11 @@ def update_delivery_event(request, event_id):
         jobs_valid = all(job_form.is_valid() for _, job_form in jobforms)
         
         if form.is_valid() and jobs_valid:
-            form.save()
+            event = form.save(commit=False)
+            event.route = form.cleaned_data['route']
+            print(form.cleaned_data['route'])
+            print(event.route)
+            event.save()
             for _, job_form in jobforms:
                 job_form.save()
             return redirect(reverse('delivery_calendar'))
@@ -742,45 +747,3 @@ def order_wizard(request, unique_code):
     
     
     
-@login_required
-def orderfake(request, unique_code):
-    customer = get_object_or_404(Customer, unique_code=unique_code)
-    
-    customer = get_object_or_404(Customer, unique_code=unique_code)
-    order = get_object_or_404(Order, po_number=po_number)
-    unit_number = len(order.units.all()) + 1
-    if order.confirmed:
-        return redirect('order_already_placed_error')
-    
-    
-    if request.method == 'POST':
-        unit_form = UnitForm(request.POST)
-        if unit_form.is_valid():
-            unit = unit_form.save(commit=False)
-            unit.order = order
-            unit.unit_number = unit_number
-            unit.save()
-        else:
-            print("INVALID")
-            print(unit_form.errors) 
-    else:
-        unit_form = UnitForm()
-
-    
-    if request.method == 'POST':
-        order_form = OrderForm(request.POST)
-        if order_form.is_valid():
-            order = order_form.save(commit=False)
-            order.customer = customer
-            order.save()
-            # Redirect to a success page or another view
-            return redirect('unit', unique_code=unique_code, po_number=order.po_number) 
-        else:
-            print("INVALID")
-    else:
-        order_form = OrderForm()
-    
-    return render(request, 'main/order_entry.html', {
-        'oform': order_form,
-        'customer': customer,
-    })

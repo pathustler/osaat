@@ -11,6 +11,56 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
+
+
+<style>
+
+.checked{
+    background-color: rgb(22 163 74);
+
+    margin-bottom: 0.75rem;
+    text-align: center;
+    font-size: 0.875rem /* 14px */;
+    line-height: 1.25rem /* 20px */;
+    border-width: 2px;
+    border-color: rgb(22 163 74) /* #4b5563 */;
+    color: white;
+    display: inline-block;
+    padding-top: 0.25rem /* 4px */;
+    padding-bottom: 0.25rem /* 4px */;
+    border-radius: 0.5rem /* 8px */;
+    padding-left: 0.5rem /* 8px */;
+    padding-right: 0.5rem;
+    font-weight: 600;
+}
+.checked:hover{
+    cursor: pointer;
+}
+.unchecked{
+
+    background-color: white;
+
+    margin-bottom: 0.75rem;
+    text-align: center;
+    font-size: 0.875rem /* 14px */;
+    line-height: 1.25rem /* 20px */;
+    border-width: 2px;
+    border-color: rgb(75 85 99) /* #4b5563 */;
+    color: rgb(75 85 99);
+    display: inline-block;
+    padding-top: 0.25rem /* 4px */;
+    padding-bottom: 0.25rem /* 4px */;
+    border-radius: 0.5rem /* 8px */;
+    padding-left: 0.5rem /* 8px */;
+    padding-right: 0.5rem /* 8px */;
+    font-weight: 600;
+
+}
+.unchecked:hover{
+    cursor: pointer;
+}
+    
+</style>
 </head>
 <body class="bg-gray-100">
     <div class="flex flex-col">
@@ -73,6 +123,33 @@
 </script> 
 
 {% block script %}
+
+<script>
+    function updateLabelClasses() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            const label = checkbox.nextElementSibling; // Change this if the label is after the checkbox
+            if (label && label.tagName === 'LABEL') {
+                if (checkbox.checked) {
+                    label.classList.add('checked');
+                    label.classList.remove('unchecked');
+                } else {
+                    label.classList.add('unchecked');
+                    label.classList.remove('checked');
+                }
+            }
+        });
+    }
+
+    // Initial call to set the correct classes
+    updateLabelClasses();
+
+    // Add event listeners to each checkbox
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateLabelClasses);
+    });
+</script>
 
 {% endblock %}
 
