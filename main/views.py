@@ -481,7 +481,6 @@ def delete_delivery_event(request, event_id):
 
 
 def update_technician_event(request, event_id):
-    a=1
     event = get_object_or_404(TechnicianEvent, id=event_id)
     if request.method == 'POST':
         form = EditTechnicianEventForm(request.POST, instance=event)
@@ -490,8 +489,19 @@ def update_technician_event(request, event_id):
             return redirect(reverse('technician_calendar'))
     else:
         form = EditTechnicianEventForm(instance=event)
-    return render(request, 'calendar/technician_calendar.html', {'form': form, 'event_id': event_id, "a":a,"event":event})
-
+        form.initial['appointment_status'] = event.appointment_status
+        print("Event appointment status:", event.appointment_status)  # Debug statement
+        print("Form initial appointment status:", form.initial['appointment_status'])  # Debug statement
+    
+    return render(request, 'calendar/technician_calendar.html', {
+        'form': form,
+        'event_id': event_id,
+        'a': 1,
+        'event': event
+    })
+    
+    
+    
 def update_sales_event(request, event_id):
     a=1
     event = get_object_or_404(SalesEvent, id=event_id)

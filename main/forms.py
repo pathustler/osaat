@@ -76,19 +76,19 @@ class UnitForm(forms.ModelForm):
 class EditTechnicianEventForm(forms.ModelForm):
     class Meta:
         model = TechnicianEvent
-        fields = ['start_time', 'end_time', 'address','main_phone','crew','appointment_status','appointment_notes']
+        fields = ['start_time', 'end_time', 'address', 'main_phone', 'crew', 'appointment_status', 'appointment_notes']
         
     def __init__(self, *args, **kwargs):
         super(EditTechnicianEventForm, self).__init__(*args, **kwargs)
-        
-        self.fields['start_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
-        self.fields['end_time'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
-        self.fields['crew'].widget.attrs.update({'class':"border-2 border-gray-300 text-gray-600 rounded-md h-8 px-2 "})
-        self.fields['address'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
-        self.fields['main_phone'].widget.attrs.update({'class':"border-2 border-gray-300 px-2 rounded-md h-8"})
-        self.fields['appointment_status'].widget.attrs.update({'class':" border-2 text-gray-600 border-gray-300 rounded-md h-8 px-2"})
-        self.fields['appointment_notes'].widget.attrs.update({'class':" w-full rounded-md border-2 h-48 border-gray-300 p-2","placeholder":"Add Appointment Notes"})
-        
+        self.fields['start_time'].widget.attrs.update({'class': "border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['end_time'].widget.attrs.update({'class': "border-2 border-gray-300 px-2 rounded-md h-8 datetimepicker"})
+        self.fields['crew'].widget.attrs.update({'class': "border-2 border-gray-300 text-gray-600 rounded-md h-8 px-2 "})
+        self.fields['address'].widget.attrs.update({'class': "border-2 border-gray-300 px-2 rounded-md h-8"})
+        self.fields['main_phone'].widget.attrs.update({'class': "border-2 border-gray-300 px-2 rounded-md h-8"})
+        self.fields['appointment_status'].widget.attrs.update({'class': "border-2 text-gray-600 border-gray-300 rounded-md h-8 px-2"})
+        self.fields['appointment_notes'].widget.attrs.update({'class': "w-full rounded-md border-2 h-48 border-gray-300 p-2", "placeholder": "Add Appointment Notes"})
+
+              
         
 class EditSalesEventForm(forms.ModelForm):
     class Meta:

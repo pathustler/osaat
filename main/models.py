@@ -221,6 +221,7 @@ class TechnicianEvent(models.Model):
     def __str__(self):
         return f"{self.technician} - {self.order.po_number} {self.visit_type}"
 
+
 class SalesEvent(models.Model):
     statusoptions = [
         ('active', 'Active'),
