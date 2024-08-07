@@ -16,7 +16,6 @@ urlpatterns = [
     path("customer/<str:unique_code>/schedule", views.schedule, name="schedule"),
     path('customer/<str:unique_code>/timeline/create/', views.timeline_create, name='timeline_create'),
     path('customer/<str:unique_code>/order/create', views.order_wizard, name="order"),
-    path('customer/<str:unique_code>/order/<str:po_number>/unit', views.unit, name="unit"),
     path('delete_event/<int:event_id>/', views.delete_event, name='delete_event'),
     path('customer/<str:unique_code>/order/<str:po_number>', views.order_info, name="orderinfo"),
     path('customer/<str:unique_code>/order/<str:po_number>/confirmation', views.confirmation, name="confirmation"),
